@@ -1,0 +1,139 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Home | Z-Store{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+
+            <p class="hero-subtitle">
+                MODERN FASHION · EVERYDAY STYLE
+            </p>
+
+            <h1 class="hero-title">
+                Discover Your Everyday Style
+            </h1>
+
+            <p class="hero-description">
+                Explore modern fashion pieces designed
+                to make every day feel special.
+            </p>
+
+            <div class="hero-actions">
+                <a href="#" class="btn btn-primary">Shop Now</a>
+                <a href="#categories" class="btn btn-outline">Explore Categories</a>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories-section" id="categories">
+    <div class="container">
+
+        <div class="section-heading">
+            <p class="section-subtitle">EXPLORE OUR COLLECTION</p>
+            <h2 class="section-title">Shop By Category</h2>
+        </div>
+
+        <div class="categories-grid">
+
+            <a href="#" class="category-card">
+                <img src="" alt="Jackets" class="category-image">
+                <h3 class="category-name">Jackets</h3>
+            </a>
+
+            <a href="#" class="category-card">
+                <img src="" alt="Knitwear" class="category-image">
+                <h3 class="category-name">Knitwear</h3>
+            </a>
+
+            <a href="#" class="category-card">
+                <img src="" alt="Blouses" class="category-image">
+                <h3 class="category-name">Blouses</h3>
+            </a>
+
+            <a href="#" class="category-card">
+                <img src="" alt="Shirts" class="category-image">
+                <h3 class="category-name">Shirts</h3>
+            </a>
+
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products Section -->
+<section class="featured-section" id="featured">
+    <div class="container">
+
+        <div class="section-heading">
+            <p class="section-subtitle">HANDPICKED FOR YOU</p>
+            <h2 class="section-title">Featured Products</h2>
+        </div>
+
+        <div class="products-grid">
+
+            {% for product in featured_products %}
+                {% include 'partials/product_card.html' %}
+            {% empty %}
+                <p>No featured products available yet.</p>
+            {% endfor %}
+
+        </div>
+    </div>
+</section>
+
+<!-- New Arrivals Section -->
+<section class="new-arrivals-section" id="new-arrivals">
+    <div class="container">
+
+        <div class="section-heading">
+            <p class="section-subtitle">JUST LANDED</p>
+            <h2 class="section-title">New Arrivals</h2>
+        </div>
+
+        <div class="products-grid">
+
+            {% for product in new_arrivals %}
+                {% include 'partials/product_card.html' %}
+            {% empty %}
+                <p>No new products available yet.</p>
+            {% endfor %}
+
+        </div>
+    </div>
+</section>
+
+<!-- Brand Section -->
+<section class="brand-section">
+    <div class="container">
+
+        <div class="brand-content">
+
+            <p class="section-subtitle">THE Z-STORE EXPERIENCE</p>
+
+            <h2 class="brand-title">
+                Style That Feels Like You
+            </h2>
+
+            <p class="brand-description">
+                At Z-Store, we believe fashion should be simple,
+                comfortable, and timeless.
+                Discover carefully selected pieces that bring
+                confidence and style to your everyday life.
+            </p>
+
+            <a href="#" class="btn btn-primary">
+                Discover Our Collection
+            </a>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

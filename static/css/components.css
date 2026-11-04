@@ -1,0 +1,496 @@
+﻿/* ========================================
+   Z-STORE | COMPONENTS
+======================================== */
+
+/* Header */
+.site-header {
+    width: 100%;
+    background-color: var(--color-white);
+    border-bottom: 1px solid #e8e5df;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-inner {
+    min-height: 82px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.logo {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.main-nav {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.main-nav a {
+    font-size: 13px;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.main-nav a:hover {
+    color: var(--color-sand);
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 13px 27px;
+    border: 1px solid var(--color-dark);
+    background-color: var(--color-dark);
+    color: var(--color-white);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    background-color: transparent;
+    color: var(--color-dark);
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--color-dark);
+}
+
+.btn-outline:hover {
+    background-color: var(--color-dark);
+    color: var(--color-white);
+}
+
+/* Product Cards */
+.product-card {
+    background-color: var(--color-white);
+    overflow: hidden;
+}
+
+.product-card img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    background-color: var(--color-cream);
+}
+
+.product-info {
+    padding: 15px 0;
+}
+
+.product-name {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.product-price {
+    margin-top: 5px;
+    color: var(--color-olive);
+    font-size: 14px;
+}
+
+/* Footer */
+.site-footer {
+    background-color: var(--color-dark);
+    color: var(--color-white);
+    padding: 55px 0 25px;
+}
+
+.footer-inner {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.footer-bottom {
+    margin-top: 35px;
+    padding-top: 20px;
+    border-top: 1px solid #444;
+    font-size: 12px;
+    color: #bdbdbd;
+}
+
+/* Mobile Navigation */
+@media (max-width: 768px) {
+    .header-inner {
+        min-height: 70px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .main-nav {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        padding-bottom: 15px;
+    }
+
+    .footer-inner {
+        flex-direction: column;
+    }
+}
+
+/* ========================================
+   Z-STORE | PREMIUM HEADER
+======================================== */
+
+.site-header {
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid #eeeae3;
+    box-shadow: 0 3px 18px rgba(0, 0, 0, 0.025);
+}
+
+.header-inner {
+    min-height: 90px;
+}
+
+.logo {
+    font-family: Georgia, serif;
+    font-size: 29px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--color-dark);
+    transition: opacity 0.3s ease;
+}
+
+.logo span {
+    color: var(--color-sand);
+}
+
+.logo:hover {
+    opacity: 0.7;
+}
+
+.main-nav {
+    gap: 36px;
+}
+
+.main-nav a {
+    position: relative;
+    padding: 8px 0;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #555;
+    transition: color 0.3s ease;
+}
+
+.main-nav a::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--color-sand);
+    transition: width 0.3s ease;
+}
+
+.main-nav a:hover {
+    color: var(--color-dark);
+}
+
+.main-nav a:hover::after {
+    width: 100%;
+}
+
+.header-actions .btn {
+    padding: 13px 25px;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+/* ========================================
+   Z-STORE | BRAND LOGO DESIGN
+======================================== */
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    flex-shrink: 0;
+    color: var(--color-dark);
+}
+
+.brand-symbol {
+    width: 58px;
+    height: 58px;
+    border: 1px solid var(--color-sand);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 39px;
+    font-weight: 700;
+    color: var(--color-dark);
+    position: relative;
+}
+
+.brand-symbol::before {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border: 1px solid rgba(182, 155, 125, 0.45);
+}
+
+.brand-name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 27px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    line-height: 1.1;
+}
+
+.brand-z {
+    color: var(--color-dark);
+}
+
+.brand-store {
+    color: var(--color-sand);
+}
+
+.brand-tagline {
+    display: block;
+    flex-basis: 100%;
+    margin-top: 6px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: var(--color-olive);
+}
+
+.header-inner {
+    justify-content: space-between;
+    gap: 25px;
+}
+
+@media (max-width: 768px) {
+    .brand-symbol {
+        width: 46px;
+        height: 46px;
+        font-size: 31px;
+    }
+
+    .brand-name {
+        font-size: 21px;
+    }
+
+    .brand-tagline {
+        font-size: 8px;
+        letter-spacing: 2px;
+    }
+}
+
+/* LOGO ALIGNMENT & TAGLINE IMPROVEMENT */
+
+.brand-logo {
+    align-items: center;
+}
+
+.brand-name {
+    align-self: center;
+    align-items: center;
+    font-size: 29px;
+    line-height: 1.2;
+}
+
+.brand-tagline {
+    margin-top: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    color: var(--color-olive);
+    line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+    .brand-name {
+        font-size: 23px;
+    }
+
+    .brand-tagline {
+        font-size: 9px;
+        letter-spacing: 2px;
+    }
+}
+
+/* Z-STORE LOGO SIZE BALANCE */
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.brand-symbol {
+    width: 72px;
+    height: 72px;
+    font-size: 49px;
+    flex-shrink: 0;
+}
+
+.brand-symbol::before {
+    inset: 5px;
+}
+
+.brand-name {
+    font-size: 35px;
+    line-height: 1.05;
+    letter-spacing: 1.3px;
+}
+
+.brand-tagline {
+    margin-top: 5px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    line-height: 1.3;
+}
+
+@media (max-width: 768px) {
+    .brand-symbol {
+        width: 56px;
+        height: 56px;
+        font-size: 38px;
+    }
+
+    .brand-name {
+        font-size: 26px;
+    }
+
+    .brand-tagline {
+        font-size: 9px;
+        letter-spacing: 1.5px;
+    }
+}
+
+
+/* FINAL LOGO TEXT ALIGNMENT */
+
+.brand-name {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: flex-start;
+    align-self: stretch;
+    min-height: 72px;
+    line-height: 1.05;
+}
+
+.brand-tagline {
+    margin-top: 5px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    line-height: 1.2;
+}
+
+@media (max-width: 768px) {
+    .brand-name {
+        min-height: 56px;
+    }
+
+    .brand-tagline {
+        font-size: 9px;
+    }
+}
+
+
+/* LOGO TEXT CENTERING */
+
+.brand-name {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    align-self: stretch;
+    min-height: 72px;
+}
+
+.brand-z,
+.brand-store {
+    line-height: 1.05;
+}
+
+.brand-tagline {
+    width: 100%;
+    text-align: center;
+    margin-top: 5px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+@media (max-width: 768px) {
+    .brand-name {
+        min-height: 56px;
+    }
+
+    .brand-tagline {
+        font-size: 9px;
+    }
+}
+
+
+/* FINAL LOGO SYMBOL ALIGNMENT */
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.brand-symbol {
+    width: 72px;
+    height: 72px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 49px;
+}
+
+.brand-name {
+    align-self: center;
+}
+
+
+/* FINAL LOGO SYMBOL ALIGNMENT */
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.brand-symbol {
+    width: 72px;
+    height: 72px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 49px;
+}
+
+.brand-name {
+    align-self: center;
+}
+
