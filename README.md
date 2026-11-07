@@ -1,4 +1,3 @@
-@'
 # Z-Store
 
 A modern clothing e-commerce web application built with Django as part of the CodeAlpha Full Stack Development Internship.
