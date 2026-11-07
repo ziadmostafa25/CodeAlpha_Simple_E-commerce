@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} | Z-Store{% endblock %}
+
+{% block content %}
+<section class="section section-page">
+    <div class="container">
+
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <ol>
+                <li><a href="{% url 'store:home' %}">Home</a></li>
+                <li><a href="{% url 'store:product_list' %}?category={{ product.category.slug|urlencode }}">{{ product.category.name }}</a></li>
+                <li aria-current="page">{{ product.name }}</li>
+            </ol>
+        </nav>
+
+        <div class="product-layout">
+
+            <div class="product-gallery">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                {% else %}
+                <span class="placeholder">No image</span>
+                {% endif %}
+            </div>
+
+            <div>
+                <a class="product-category" href="{% url 'store:product_list' %}?category={{ product.category.slug|urlencode }}">{{ product.category.name }}</a>
+                <h1 class="product-title">{{ product.name }}</h1>
+                <p class="product-price">EGP {{ product.price|floatformat:"-2" }}</p>
+
+                {% if product.description %}
+                <div class="product-description">{{ product.description|linebreaks }}</div>
+                {% endif %}
+
+                <h2 class="field-label">Sizes</h2>
+                <ul class="size-list">
+                    {% for item in product.ordered_sizes %}
+                    <li class="size-chip{% if not item.stock %} is-sold-out{% endif %}">
+                        {{ item.size }}{% if not item.stock %}<span class="visually-hidden"> (sold out)</span>{% endif %}
+                    </li>
+                    {% empty %}
+                    <li class="size-note">No sizes listed yet.</li>
+                    {% endfor %}
+                </ul>
+
+                {% if not product.is_in_stock %}
+                <p class="stock-note">This product is currently sold out.</p>
+                {% endif %}
+
+                <div class="info-panel">
+                    <h2 class="info-panel-title">Payment</h2>
+                    <p>Pay on delivery, or by Vodafone Cash or InstaPay.</p>
+                </div>
+            </div>
+
+        </div>
+
+        {% if related_products %}
+        <div class="related">
+            <h2 class="section-title">More in {{ product.category.name }}</h2>
+            <div class="card-grid">
+                {% for product in related_products %}
+                    {% include 'partials/product_card.html' %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</section>
+{% endblock %}

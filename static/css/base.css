@@ -1,31 +1,96 @@
-﻿/* ========================================
-   Z-STORE | BASE STYLES
-======================================== */
+/* ==========================================================================
+   Z-Store | Base: design tokens, reset, typography, layout
+   Atelier identity: oxblood and porcelain. Bodoni Moda for headlines,
+   Jost for everything else. Square corners throughout.
+   ========================================================================== */
 
 :root {
-    --color-dark: #171717;
-    --color-cream: #F4F0E8;
-    --color-sand: #B69B7D;
-    --color-white: #FFFFFF;
-    --color-olive: #6D7468;
-    --font-main: Arial, Helvetica, sans-serif;
+    /* Colour */
+    --color-bg: #F7F3F0;
+    --color-surface: #FFFFFF;
+    --color-sand: #E9DED6;
+    --color-line: #E2D6CF;
+    --color-ink: #1C1517;
+    --color-ink-soft: #3B3033;
+    --color-muted: #6B5F62;
+    --color-primary: #5B1E2B;
+    --color-primary-hover: #451621;
+    --color-on-primary: #F7F3F0;
+    --color-on-primary-muted: #E0CDCF;
+
+    /* Typography */
+    --font-display: 'Bodoni Moda', 'Didot', 'Bodoni 72', Georgia, serif;
+    --font-body: 'Jost', system-ui, -apple-system, 'Segoe UI', Roboto,
+        Arial, sans-serif;
+
+    --text-xs: 0.8125rem;
+    --text-sm: 0.9375rem;
+    --text-base: 1.0625rem;
+    --text-lg: 1.25rem;
+    --display-md: clamp(1.5rem, 1.25rem + 1vw, 2rem);
+    --display-lg: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
+    --display-xl: clamp(2.75rem, 1.5rem + 5.2vw, 5.25rem);
+
+    /* Spacing */
+    --space-1: 0.5rem;
+    --space-2: 1rem;
+    --space-3: 1.5rem;
+    --space-4: 2.5rem;
+    --space-5: 4rem;
+    --space-6: 6rem;
+    --section-space: clamp(3.5rem, 2rem + 6vw, 7rem);
+
+    /* Layout */
+    --container: 1280px;
+    --gutter: clamp(1.25rem, 4vw, 3rem);
+    --header-height: 64px;
+
+    /* Motion */
+    --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
-* {
-    margin: 0;
-    padding: 0;
+@media (min-width: 900px) {
+    :root {
+        --header-height: 80px;
+    }
+}
+
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
 html {
-    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-height) + var(--space-2));
+    -webkit-text-size-adjust: 100%;
 }
 
 body {
-    font-family: var(--font-main);
-    background-color: var(--color-white);
-    color: var(--color-dark);
+    margin: 0;
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: var(--text-base);
     line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, p, ul, ol, figure {
+    margin: 0;
+}
+
+ul, ol {
+    padding: 0;
+    list-style: none;
+}
+
+h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
 }
 
 a {
@@ -33,24 +98,65 @@ a {
     text-decoration: none;
 }
 
-button,
-input,
-textarea,
-select {
-    font: inherit;
-}
-
-button {
-    cursor: pointer;
-}
-
-img {
+img,
+svg {
     display: block;
     max-width: 100%;
 }
 
+button,
+input,
+select,
+textarea {
+    font: inherit;
+    color: inherit;
+}
+
+:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+}
+
 .container {
-    width: min(90%, 1200px);
+    width: min(100% - 2 * var(--gutter), var(--container));
     margin-inline: auto;
 }
 
+.section {
+    padding-block: var(--section-space);
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+.skip-link {
+    position: absolute;
+    left: var(--space-2);
+    top: -100px;
+    z-index: 100;
+    padding: var(--space-1) var(--space-2);
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+}
+
+.skip-link:focus {
+    top: var(--space-1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition: none !important;
+        animation: none !important;
+    }
+}

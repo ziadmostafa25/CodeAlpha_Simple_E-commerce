@@ -1,138 +1,114 @@
-
 {% extends 'base.html' %}
 
-{% block title %}Home | Z-Store{% endblock %}
+{% block title %}Z-Store | Modern clothing{% endblock %}
 
 {% block content %}
 
-<!-- Hero Section -->
 <section class="hero">
-    <div class="container">
-        <div class="hero-content">
-
-            <p class="hero-subtitle">
-                MODERN FASHION · EVERYDAY STYLE
-            </p>
-
-            <h1 class="hero-title">
-                Discover Your Everyday Style
-            </h1>
-
-            <p class="hero-description">
-                Explore modern fashion pieces designed
-                to make every day feel special.
-            </p>
-
-            <div class="hero-actions">
-                <a href="#" class="btn btn-primary">Shop Now</a>
-                <a href="#categories" class="btn btn-outline">Explore Categories</a>
-            </div>
-
+    <div class="hero-copy">
+        <h1 class="hero-title">Quiet clothes,<br><em>made to last.</em></h1>
+        <p class="hero-text">
+            Well-cut pieces in sizes S to XL. Choose your size, then pay on
+            delivery or by transfer.
+        </p>
+        <div class="hero-actions">
+            <a class="btn btn-light" href="{% url 'store:product_list' %}">Shop all products</a>
+            {% if categories %}
+            <a class="btn btn-outline-light" href="#categories">Browse categories</a>
+            {% endif %}
         </div>
+    </div>
+
+    <div class="hero-media">
+        {% if hero_product %}
+        <a class="hero-link" href="{{ hero_product.get_absolute_url }}">
+            {% if hero_product.image %}
+            <img src="{{ hero_product.image.url }}" alt="{{ hero_product.name }}">
+            {% else %}
+            <span class="placeholder">No image</span>
+            {% endif %}
+            <span class="hero-tag">
+                <span class="hero-tag-name">{{ hero_product.name }}</span>
+                <span>EGP {{ hero_product.price|floatformat:"-2" }}</span>
+            </span>
+        </a>
+        {% else %}
+        <span class="placeholder">Product photos appear here once you add products.</span>
+        {% endif %}
     </div>
 </section>
 
-<!-- Categories Section -->
-<section class="categories-section" id="categories">
+{% if categories %}
+<section class="section" id="categories">
     <div class="container">
-
-        <div class="section-heading">
-            <p class="section-subtitle">EXPLORE OUR COLLECTION</p>
-            <h2 class="section-title">Shop By Category</h2>
+        <div class="section-head">
+            <h2 class="section-title">Shop by category</h2>
         </div>
-
-        <div class="categories-grid">
-
-            <a href="#" class="category-card">
-                <img src="" alt="Jackets" class="category-image">
-                <h3 class="category-name">Jackets</h3>
+        <div class="card-grid card-grid-3">
+            {% for category in categories %}
+            <a class="category-card" href="{% url 'store:product_list' %}?category={{ category.slug|urlencode }}">
+                <span class="category-card-media">
+                    {% if category.cover_url %}
+                    <img src="{{ category.cover_url }}" alt="" loading="lazy">
+                    {% else %}
+                    <span class="placeholder">No image</span>
+                    {% endif %}
+                </span>
+                <span class="category-card-info">
+                    <span class="category-card-name">{{ category.name }}</span>
+                    <span class="category-card-count">{{ category.product_count }} item{{ category.product_count|pluralize }}</span>
+                </span>
             </a>
-
-            <a href="#" class="category-card">
-                <img src="" alt="Knitwear" class="category-image">
-                <h3 class="category-name">Knitwear</h3>
-            </a>
-
-            <a href="#" class="category-card">
-                <img src="" alt="Blouses" class="category-image">
-                <h3 class="category-name">Blouses</h3>
-            </a>
-
-            <a href="#" class="category-card">
-                <img src="" alt="Shirts" class="category-image">
-                <h3 class="category-name">Shirts</h3>
-            </a>
-
+            {% endfor %}
         </div>
     </div>
 </section>
+{% endif %}
 
-<!-- Featured Products Section -->
-<section class="featured-section" id="featured">
+{% if featured_products %}
+<section class="section section-surface" id="featured">
     <div class="container">
-
-        <div class="section-heading">
-            <p class="section-subtitle">HANDPICKED FOR YOU</p>
-            <h2 class="section-title">Featured Products</h2>
+        <div class="section-head">
+            <h2 class="section-title">Featured</h2>
+            <a class="text-link" href="{% url 'store:product_list' %}">View all products</a>
         </div>
-
-        <div class="products-grid">
-
+        <div class="card-grid">
             {% for product in featured_products %}
                 {% include 'partials/product_card.html' %}
-            {% empty %}
-                <p>No featured products available yet.</p>
             {% endfor %}
-
         </div>
     </div>
 </section>
+{% endif %}
 
-<!-- New Arrivals Section -->
-<section class="new-arrivals-section" id="new-arrivals">
+{% if new_arrivals %}
+<section class="section" id="new-arrivals">
     <div class="container">
-
-        <div class="section-heading">
-            <p class="section-subtitle">JUST LANDED</p>
-            <h2 class="section-title">New Arrivals</h2>
+        <div class="section-head">
+            <h2 class="section-title">New arrivals</h2>
+            <a class="text-link" href="{% url 'store:product_list' %}">View all products</a>
         </div>
-
-        <div class="products-grid">
-
+        <div class="card-grid">
             {% for product in new_arrivals %}
                 {% include 'partials/product_card.html' %}
-            {% empty %}
-                <p>No new products available yet.</p>
             {% endfor %}
-
         </div>
     </div>
 </section>
+{% endif %}
 
-<!-- Brand Section -->
-<section class="brand-section">
+{% if not featured_products and not new_arrivals %}
+<section class="section">
     <div class="container">
+        <p class="empty-state">The shop is being stocked. Please check back soon.</p>
+    </div>
+</section>
+{% endif %}
 
-        <div class="brand-content">
-
-            <p class="section-subtitle">THE Z-STORE EXPERIENCE</p>
-
-            <h2 class="brand-title">
-                Style That Feels Like You
-            </h2>
-
-            <p class="brand-description">
-                At Z-Store, we believe fashion should be simple,
-                comfortable, and timeless.
-                Discover carefully selected pieces that bring
-                confidence and style to your everyday life.
-            </p>
-
-            <a href="#" class="btn btn-primary">
-                Discover Our Collection
-            </a>
-
-        </div>
+<section class="band">
+    <div class="container band-inner">
+        <p class="band-title">Simple, well-cut pieces for every day.</p>
+        <a class="btn btn-primary" href="{% url 'store:product_list' %}">Shop all products</a>
     </div>
 </section>
 

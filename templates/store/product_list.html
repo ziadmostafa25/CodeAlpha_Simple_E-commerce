@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if selected_category %}{{ selected_category.name }}{% elif query %}Search: {{ query }}{% else %}Shop{% endif %} | Z-Store{% endblock %}
+
+{% block content %}
+<section class="section section-page">
+    <div class="container">
+
+        <header class="page-header">
+            <h1 class="page-title">
+                {% if selected_category %}{{ selected_category.name }}
+                {% elif query %}Results for “{{ query }}”
+                {% else %}All products{% endif %}
+            </h1>
+            <p class="page-meta">{{ total }} product{{ total|pluralize }}</p>
+        </header>
+
+        <div class="shop">
+
+            <aside class="shop-filters" aria-label="Filters">
+                <div class="filter-group">
+                    <h2 class="filter-title">Categories</h2>
+                    <ul class="filter-links">
+                        <li><a href="{% url 'store:product_list' %}"{% if not selected_category %} aria-current="page"{% endif %}>All</a></li>
+                        {% for category in categories %}
+                        <li>
+                            <a href="{% url 'store:product_list' %}?category={{ category.slug|urlencode }}"{% if category == selected_category %} aria-current="page"{% endif %}>
+                                {{ category.name }} <span class="filter-count">{{ category.product_count }}</span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <form class="filter-group filter-form" method="get" action="{% url 'store:product_list' %}">
+                    {% if selected_category %}
+                    <input type="hidden" name="category" value="{{ selected_category.slug }}">
+                    {% endif %}
+                    <label class="visually-hidden" for="filter-q">Search products</label>
+                    <input class="input" id="filter-q" type="search" name="q" value="{{ query }}"
+                           placeholder="Search products" maxlength="100">
+                    <label class="visually-hidden" for="filter-sort">Sort by</label>
+                    <select class="input" id="filter-sort" name="sort">
+                        {% for key, label in sort_options %}
+                        <option value="{{ key }}"{% if key == sort %} selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn btn-primary" type="submit">Apply</button>
+                </form>
+            </aside>
+
+            <div>
+                {% if products %}
+                <h2 class="visually-hidden">Products</h2>
+                <div class="card-grid card-grid-3">
+                    {% for product in products %}
+                        {% include 'partials/product_card.html' %}
+                    {% endfor %}
+                </div>
+
+                {% if products.has_other_pages %}
+                <nav class="pagination" aria-label="Pages">
+                    {% if products.has_previous %}
+                    <a class="btn btn-secondary" href="?{{ base_query }}&amp;page={{ products.previous_page_number }}">Previous</a>
+                    {% endif %}
+                    <span class="pagination-status">Page {{ products.number }} of {{ products.paginator.num_pages }}</span>
+                    {% if products.has_next %}
+                    <a class="btn btn-secondary" href="?{{ base_query }}&amp;page={{ products.next_page_number }}">Next</a>
+                    {% endif %}
+                </nav>
+                {% endif %}
+
+                {% else %}
+                <div class="empty-state">
+                    <p>No products match your search.</p>
+                    <a class="btn btn-secondary" href="{% url 'store:product_list' %}">Clear filters</a>
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+
+    </div>
+</section>
+{% endblock %}

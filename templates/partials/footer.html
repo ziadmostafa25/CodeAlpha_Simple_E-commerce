@@ -1,0 +1,35 @@
+<footer class="site-footer">
+    <div class="container footer-grid">
+
+        <div class="footer-about">
+            <a class="footer-logo" href="{% url 'store:home' %}" aria-label="Z-Store home">
+                {% include 'partials/logo.html' with logo_class='logo-light' %}
+            </a>
+            <p>Modern clothing for everyday wear, in sizes S to XL.</p>
+        </div>
+
+        <nav aria-label="Shop links">
+            <h2 class="footer-heading">Shop</h2>
+            <ul class="footer-list">
+                <li><a href="{% url 'store:product_list' %}">All products</a></li>
+                <li><a href="{% url 'store:home' %}#new-arrivals">New in</a></li>
+                <li><a href="{% url 'store:home' %}#categories">Categories</a></li>
+                <li><a href="{% url 'store:home' %}#featured">Featured</a></li>
+            </ul>
+        </nav>
+
+        <div>
+            <h2 class="footer-heading">Payment</h2>
+            <ul class="footer-list">
+                <li>Cash on delivery</li>
+                <li>Vodafone Cash</li>
+                <li>InstaPay</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="container footer-bottom">
+        <p>&copy; {% now "Y" %} Z-Store. All rights reserved.</p>
+    </div>
+</footer>
