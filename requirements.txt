@@ -1,5 +1,14 @@
+﻿Django==6.1.1
+Pillow==13.0.0
 asgiref==3.13.0
-Django==6.1.1
-pillow==13.0.0
 sqlparse==0.6.1
 tzdata==2026.6
+gunicorn==26.2.0
+whitenoise==6.12.0
+psycopg[binary]==3.3.8
+dj-database-url==3.1.2
+
+cloudinary==1.47.0
+certifi==2026.10.23
+six==1.17.0
+urllib3==2.8.0

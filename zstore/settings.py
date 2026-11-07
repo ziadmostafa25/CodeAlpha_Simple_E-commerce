@@ -1,4 +1,4 @@
-"""
+﻿"""
 Django settings for the Z-Store project.
 
 Local development works with no configuration. For a real deployment set the
@@ -11,6 +11,7 @@ from decimal import Decimal
 from pathlib import Path
 
 from django.core.exceptions import ImproperlyConfigured
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -30,6 +31,10 @@ def env_decimal(name, default):
 
 # Security -------------------------------------------------------------------
 DEBUG = env_bool('DJANGO_DEBUG', True)
+# Cloudinary credentials
+CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUDINARY_CLOUD_NAME', '').strip()
+CLOUDINARY_API_KEY = os.environ.get('CLOUDINARY_API_KEY', '').strip()
+CLOUDINARY_API_SECRET = os.environ.get('CLOUDINARY_API_SECRET', '').strip()
 
 DEV_SECRET_KEY = 'django-insecure-local-development-key-do-not-use-in-production'
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', DEV_SECRET_KEY)
@@ -69,6 +74,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -105,6 +111,15 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+DATABASE_URL = os.environ.get('DATABASE_URL', '').strip()
+if DATABASE_URL:
+    DATABASES['default'] = dj_database_url.config(
+        default=DATABASE_URL,
+        conn_max_age=600,
+        conn_health_checks=True,
+        ssl_require=not DEBUG,
+    )
 
 
 # Authentication ------------------------------------------------------------------
@@ -146,6 +161,27 @@ STATICFILES_DIRS = [
 # Target of `python manage.py collectstatic` (needed for deployment only).
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# Production storage ---------------------------------------------------------
+
+if not DEBUG:
+    if not all([
+        CLOUDINARY_CLOUD_NAME,
+        CLOUDINARY_API_KEY,
+        CLOUDINARY_API_SECRET,
+    ]):
+        raise ImproperlyConfigured(
+            'Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, '
+            'and CLOUDINARY_API_SECRET in production.'
+        )
+
+    STORAGES = {
+        'default': {
+            'BACKEND': 'zstore.cloudinary_storage.CloudinaryMediaStorage',
+        },
+        'staticfiles': {
+            'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+        },
+    }
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -162,3 +198,6 @@ CART_MAX_QUANTITY = 10
 # whose details are empty is shown as unavailable at checkout.
 VODAFONE_CASH_NUMBER = os.environ.get('ZSTORE_VODAFONE_CASH_NUMBER', '').strip()
 INSTAPAY_ADDRESS = os.environ.get('ZSTORE_INSTAPAY_ADDRESS', '').strip()
+
+
+
