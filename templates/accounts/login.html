@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign in | Z-Store{% endblock %}
+
+{% block content %}
+<section class="section section-page">
+    <div class="container narrow">
+
+        <h1 class="page-title">Sign in</h1>
+
+        <form class="auth-form" method="post" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+            {% if form.non_field_errors %}
+            <p class="form-alert" role="alert">{{ form.non_field_errors.0 }}</p>
+            {% endif %}
+            {% include 'partials/field.html' with field=form.username %}
+            {% include 'partials/field.html' with field=form.password %}
+            <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+        </form>
+
+        <p class="auth-switch">New to Z-Store?
+            <a class="text-link" href="{% url 'accounts:register' %}{% if next %}?next={{ next|urlencode }}{% endif %}">Create an account</a>
+        </p>
+
+    </div>
+</section>
+{% endblock %}

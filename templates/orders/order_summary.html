@@ -1,0 +1,21 @@
+<div class="panel">
+    <h2 class="panel-title">Items</h2>
+    <ul class="order-items">
+        {% for item in order.items.all %}
+        <li class="order-item">
+            <span class="order-item-media">{% if item.image_url %}<img src="{{ item.image_url }}" alt="" loading="lazy">{% endif %}</span>
+            <span class="order-item-info">
+                <span class="order-item-name">{{ item.product_name }}</span>
+                <span class="order-item-meta">{{ item.color_name }}, size {{ item.size_label }}</span>
+                <span class="order-item-meta">{{ item.quantity }} x EGP {{ item.unit_price|floatformat:"-2" }}</span>
+            </span>
+            <span class="order-item-total">EGP {{ item.line_total|floatformat:"-2" }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+    <dl class="summary-rows">
+        <div><dt>Subtotal</dt><dd>EGP {{ order.subtotal|floatformat:"-2" }}</dd></div>
+        <div><dt>Delivery</dt><dd>{% if order.shipping_fee %}EGP {{ order.shipping_fee|floatformat:"-2" }}{% else %}Free{% endif %}</dd></div>
+        <div class="summary-total"><dt>Total</dt><dd>EGP {{ order.total|floatformat:"-2" }}</dd></div>
+    </dl>
+</div>

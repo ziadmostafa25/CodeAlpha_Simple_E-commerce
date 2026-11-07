@@ -17,11 +17,37 @@
         <div class="product-layout">
 
             <div class="product-gallery">
-                {% if product.image %}
-                <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                {% else %}
-                <span class="placeholder">No image</span>
-                {% endif %}
+                {% for color in colors %}
+                {% with urls=color.gallery_urls %}
+                <div data-gallery="{{ color.pk }}"{% if color != selected_color %} hidden{% endif %}>
+                    <div class="gallery-main">
+                        <img src="{{ urls.0 }}" alt="{{ product.name }}, {{ color.name }}" data-gallery-main>
+                    </div>
+                    {% if urls|length > 1 %}
+                    <ul class="gallery-thumbs">
+                        {% for url in urls %}
+                        <li>
+                            <button class="gallery-thumb" type="button" data-full="{{ url }}"
+                                    aria-label="Show photo {{ forloop.counter }} of {{ urls|length }}">
+                                <img src="{{ url }}" alt="">
+                            </button>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                {% endwith %}
+                {% empty %}
+                <div>
+                    <div class="gallery-main">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                        <span class="placeholder">No image</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
             </div>
 
             <div>
@@ -33,25 +59,59 @@
                 <div class="product-description">{{ product.description|linebreaks }}</div>
                 {% endif %}
 
-                <h2 class="field-label">Sizes</h2>
-                <ul class="size-list">
-                    {% for item in product.ordered_sizes %}
-                    <li class="size-chip{% if not item.stock %} is-sold-out{% endif %}">
-                        {{ item.size }}{% if not item.stock %}<span class="visually-hidden"> (sold out)</span>{% endif %}
-                    </li>
-                    {% empty %}
-                    <li class="size-note">No sizes listed yet.</li>
-                    {% endfor %}
-                </ul>
+                {% if colors and product.is_in_stock %}
+                <form class="purchase" method="post" action="{% url 'cart:add' %}" data-purchase>
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ product.get_absolute_url }}">
 
-                {% if not product.is_in_stock %}
+                    <fieldset class="option-group">
+                        <legend class="form-label">Colour: <span data-color-name>{{ selected_color.name }}</span></legend>
+                        <div class="swatches">
+                            {% for color in colors %}
+                            <label class="swatch{% if not color.is_in_stock %} is-sold-out{% endif %}">
+                                <input class="visually-hidden" type="radio" name="color" value="{{ color.pk }}"
+                                       data-color-input data-color-label="{{ color.name }}"
+                                       {% if color == selected_color %}checked{% endif %}
+                                       {% if not color.is_in_stock %}disabled{% endif %}>
+                                <span class="swatch-chip" style="--swatch: {{ color.hex_code }}"></span>
+                                <span class="visually-hidden">{{ color.name }}{% if not color.is_in_stock %} (sold out){% endif %}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </fieldset>
+
+                    {% for color in colors %}
+                    <fieldset class="option-group" data-sizes-for="{{ color.pk }}"{% if color != selected_color %} hidden{% endif %}>
+                        <legend class="form-label">Size</legend>
+                        <div class="size-options">
+                            {% for item in color.ordered_sizes %}
+                            <label class="size-option{% if not item.stock %} is-sold-out{% endif %}">
+                                <input class="visually-hidden" type="radio" name="size" value="{{ item.pk }}"
+                                       data-stock="{{ item.stock }}"
+                                       {% if not item.stock %}disabled{% endif %}>
+                                <span class="size-option-label">{{ item.size }}</span>
+                                {% if not item.stock %}<span class="visually-hidden">(sold out)</span>{% endif %}
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </fieldset>
+                    {% endfor %}
+                    <p class="stock-hint" data-stock-hint aria-live="polite"></p>
+
+                    <div class="field">
+                        <label class="form-label" for="quantity">Quantity</label>
+                        <input class="input quantity-input" id="quantity" type="number" name="quantity"
+                               value="1" min="1" max="{{ max_quantity }}" inputmode="numeric"
+                               data-quantity data-max="{{ max_quantity }}">
+                    </div>
+
+                    <button class="btn btn-primary btn-block" type="submit">Add to cart</button>
+                </form>
+                {% else %}
                 <p class="stock-note">This product is currently sold out.</p>
                 {% endif %}
 
-                <div class="info-panel">
-                    <h2 class="info-panel-title">Payment</h2>
-                    <p>Pay on delivery, or by Vodafone Cash or InstaPay.</p>
-                </div>
+                <p class="policy-note">{{ return_policy }}</p>
             </div>
 
         </div>

@@ -1,45 +1,50 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Z-Store | Modern clothing{% endblock %}
 
 {% block content %}
 
 <section class="hero">
-    <div class="hero-copy">
-        <h1 class="hero-title">Quiet clothes,<br><em>made to last.</em></h1>
-        <p class="hero-text">
-            Well-cut pieces in sizes S to XL. Choose your size, then pay on
-            delivery or by transfer.
-        </p>
-        <div class="hero-actions">
-            <a class="btn btn-light" href="{% url 'store:product_list' %}">Shop all products</a>
-            {% if categories %}
-            <a class="btn btn-outline-light" href="#categories">Browse categories</a>
+    <div class="container hero-grid">
+
+        <div>
+            <h1 class="hero-title">Quiet clothes,<br><em>made to last.</em></h1>
+            <p class="hero-text">Simple, well-cut pieces in sizes S to XL.</p>
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="{% url 'store:product_list' %}">Shop now</a>
+                {% if categories %}
+                <a class="text-link" href="#categories">Browse categories</a>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Hero image. Today it shows the featured product chosen in Django Admin. #}
+        {# To use a dedicated campaign photo later, replace the content of this block with: #}
+        {# <img src="{% static 'images/hero.jpg' %}" alt="Describe the photo"> #}
+        <div class="hero-media">
+            {% if hero_product %}
+            <a class="hero-link" href="{{ hero_product.get_absolute_url }}">
+                {% if hero_product.image %}
+                <img src="{{ hero_product.image.url }}" alt="{{ hero_product.name }}">
+                {% else %}
+                <span class="placeholder">No image</span>
+                {% endif %}
+                <span class="hero-tag">
+                    <span class="hero-tag-name">{{ hero_product.name }}</span>
+                    <span>EGP {{ hero_product.price|floatformat:"-2" }}</span>
+                </span>
+            </a>
+            {% else %}
+            <span class="placeholder">Product photos appear here once you add products.</span>
             {% endif %}
         </div>
-    </div>
 
-    <div class="hero-media">
-        {% if hero_product %}
-        <a class="hero-link" href="{{ hero_product.get_absolute_url }}">
-            {% if hero_product.image %}
-            <img src="{{ hero_product.image.url }}" alt="{{ hero_product.name }}">
-            {% else %}
-            <span class="placeholder">No image</span>
-            {% endif %}
-            <span class="hero-tag">
-                <span class="hero-tag-name">{{ hero_product.name }}</span>
-                <span>EGP {{ hero_product.price|floatformat:"-2" }}</span>
-            </span>
-        </a>
-        {% else %}
-        <span class="placeholder">Product photos appear here once you add products.</span>
-        {% endif %}
     </div>
 </section>
 
 {% if categories %}
-<section class="section" id="categories">
+<section class="section section-white" id="categories">
     <div class="container">
         <div class="section-head">
             <h2 class="section-title">Shop by category</h2>
@@ -66,7 +71,7 @@
 {% endif %}
 
 {% if featured_products %}
-<section class="section section-surface" id="featured">
+<section class="section" id="featured">
     <div class="container">
         <div class="section-head">
             <h2 class="section-title">Featured</h2>
@@ -82,11 +87,11 @@
 {% endif %}
 
 {% if new_arrivals %}
-<section class="section" id="new-arrivals">
+<section class="section section-white" id="new-arrivals">
     <div class="container">
         <div class="section-head">
             <h2 class="section-title">New arrivals</h2>
-            <a class="text-link" href="{% url 'store:product_list' %}">View all products</a>
+            <a class="text-link" href="{% url 'store:product_list' %}?sort=newest">View all new arrivals</a>
         </div>
         <div class="card-grid">
             {% for product in new_arrivals %}
@@ -108,7 +113,7 @@
 <section class="band">
     <div class="container band-inner">
         <p class="band-title">Simple, well-cut pieces for every day.</p>
-        <a class="btn btn-primary" href="{% url 'store:product_list' %}">Shop all products</a>
+        <a class="btn btn-primary" href="{% url 'store:product_list' %}">Shop now</a>
     </div>
 </section>
 

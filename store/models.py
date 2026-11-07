@@ -1,15 +1,18 @@
-﻿
 from decimal import Decimal
 
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 from django.urls import reverse
+
+from .validators import IMAGE_VALIDATORS
 
 
 class Category(models.Model):
     name = models.CharField(max_length=80, unique=True)
     slug = models.SlugField(max_length=80, unique=True)
-    image = models.ImageField(upload_to='categories/', blank=True)
+    image = models.ImageField(
+        upload_to='categories/', blank=True, validators=IMAGE_VALIDATORS
+    )
 
     class Meta:
         verbose_name_plural = 'categories'
@@ -33,7 +36,8 @@ class Product(models.Model):
         decimal_places=2,
         validators=[MinValueValidator(Decimal('0.01'))],
     )
-    image = models.ImageField(upload_to='products/')
+    # Default image: used for cards and as the fallback when a colour has no photos.
+    image = models.ImageField(upload_to='products/', validators=IMAGE_VALIDATORS)
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -48,7 +52,57 @@ class Product(models.Model):
         return reverse('store:product_detail', kwargs={'slug': self.slug})
 
     @property
+    def available_sizes(self):
+        """Sizes (S, M, L, XL order) that are in stock in at least one colour."""
+        in_stock = {
+            item.size
+            for color in self.colors.all()
+            for item in color.sizes.all()
+            if item.stock > 0
+        }
+        return [size for size in ProductSize.Size.values if size in in_stock]
+
+    @property
+    def is_in_stock(self):
+        return bool(self.available_sizes)
+
+
+class ProductColor(models.Model):
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name='colors',
+    )
+    name = models.CharField(max_length=60)
+    hex_code = models.CharField(
+        'colour code',
+        max_length=7,
+        default='#292821',
+        validators=[
+            RegexValidator(
+                r'^#[0-9A-Fa-f]{6}$',
+                'Enter a colour code like #A17B55.',
+            )
+        ],
+        help_text='Used for the colour swatch, for example #A17B55.',
+    )
+    sort_order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ['sort_order', 'pk']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['product', 'name'],
+                name='unique_color_name_per_product',
+            ),
+        ]
+
+    def __str__(self):
+        return f'{self.product.name} - {self.name}'
+
+    @property
     def ordered_sizes(self):
+        """Sizes in S, M, L, XL order (uses prefetched sizes when available)."""
         size_order = ProductSize.Size.values
         return sorted(
             self.sizes.all(),
@@ -60,12 +114,34 @@ class Product(models.Model):
         )
 
     @property
-    def available_sizes(self):
-        return [item for item in self.ordered_sizes if item.stock > 0]
+    def is_in_stock(self):
+        return any(item.stock > 0 for item in self.sizes.all())
 
     @property
-    def is_in_stock(self):
-        return bool(self.available_sizes)
+    def gallery_urls(self):
+        """This colour's photos, or the product's default image when it has none."""
+        urls = [image.image.url for image in self.images.all() if image.image]
+        if not urls and self.product.image:
+            urls = [self.product.image.url]
+        return urls
+
+
+class ColorImage(models.Model):
+    color = models.ForeignKey(
+        ProductColor,
+        on_delete=models.CASCADE,
+        related_name='images',
+    )
+    image = models.ImageField(
+        upload_to='products/colors/', validators=IMAGE_VALIDATORS
+    )
+    sort_order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ['sort_order', 'pk']
+
+    def __str__(self):
+        return f'{self.color} image {self.pk}'
 
 
 class ProductSize(models.Model):
@@ -75,8 +151,8 @@ class ProductSize(models.Model):
         LARGE = 'L', 'L'
         EXTRA_LARGE = 'XL', 'XL'
 
-    product = models.ForeignKey(
-        Product,
+    color = models.ForeignKey(
+        ProductColor,
         on_delete=models.CASCADE,
         related_name='sizes',
     )
@@ -86,13 +162,17 @@ class ProductSize(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['product', 'size'],
-                name='unique_size_per_product',
+                fields=['color', 'size'],
+                name='unique_size_per_color',
             ),
         ]
 
     def __str__(self):
-        return f'{self.product.name} - {self.size}'
+        return f'{self.color} / {self.size}'
+
+    @property
+    def product(self):
+        return self.color.product
 
     @property
     def is_in_stock(self):

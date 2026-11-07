@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Order {{ order.reference }} | Z-Store{% endblock %}
+
+{% block content %}
+<section class="section section-page">
+    <div class="container narrow">
+
+        <header class="confirmation-head">
+            <h1 class="page-title">Thank you, your order is placed.</h1>
+            <p class="confirmation-reference">Order reference <strong>{{ order.reference }}</strong></p>
+            <p>We will contact you on {{ order.phone }} about your delivery.</p>
+        </header>
+
+        <div class="panel">
+            <h2 class="panel-title">{{ payment.label }}</h2>
+            {% include 'orders/payment_instructions.html' with option=payment %}
+            <p class="payment-total">Amount to pay: <strong>EGP {{ order.total|floatformat:"-2" }}</strong></p>
+            {% if order.payment_method != 'cod' %}
+            <p class="field-help">Quote {{ order.reference }} when you contact the store about your transfer.</p>
+            {% endif %}
+        </div>
+
+        {% include 'orders/order_summary.html' %}
+
+        <p class="policy-note">{{ return_policy }}</p>
+
+        <div class="button-row">
+            <a class="btn btn-primary" href="{{ order.get_absolute_url }}">View order</a>
+            <a class="btn btn-secondary" href="{% url 'store:product_list' %}">Continue shopping</a>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

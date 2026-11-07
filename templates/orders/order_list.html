@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}My orders | Z-Store{% endblock %}
+
+{% block content %}
+<section class="section section-page">
+    <div class="container">
+
+        <header class="page-header">
+            <h1 class="page-title">My orders</h1>
+            <p class="page-meta">{{ orders|length }} order{{ orders|length|pluralize }}</p>
+        </header>
+
+        {% if orders %}
+        <ul class="order-list">
+            {% for order in orders %}
+            <li class="order-row">
+                <a class="order-row-main" href="{{ order.get_absolute_url }}">
+                    <span class="order-row-reference">{{ order.reference }}</span>
+                    <span class="order-row-date">{{ order.created_at|date:"j M Y" }}</span>
+                </a>
+                <span class="badge badge-{{ order.status }}">{{ order.get_status_display }}</span>
+                <span class="order-row-total">EGP {{ order.total|floatformat:"-2" }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="empty-state">
+            <p>You have not placed any orders yet.</p>
+            <a class="btn btn-primary" href="{% url 'store:product_list' %}">Start shopping</a>
+        </div>
+        {% endif %}
+
+    </div>
+</section>
+{% endblock %}

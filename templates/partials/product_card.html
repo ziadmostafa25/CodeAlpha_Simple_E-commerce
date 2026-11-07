@@ -18,11 +18,16 @@
             <p class="product-card-price">EGP {{ product.price|floatformat:"-2" }}</p>
         </div>
         <p class="product-card-sizes">
-            {% if product.is_in_stock %}
-                {% for item in product.available_sizes %}{{ item.size }}{% if not forloop.last %}, {% endif %}{% endfor %}
-            {% else %}
-                Currently unavailable
-            {% endif %}
+            {% if product.is_in_stock %}{{ product.available_sizes|join:", " }}{% else %}Currently unavailable{% endif %}
         </p>
+        {% with colors=product.colors.all %}
+        {% if colors|length > 1 %}
+        <ul class="swatch-dots" aria-label="Available colours">
+            {% for color in colors|slice:":6" %}
+            <li class="swatch-dot" style="--swatch: {{ color.hex_code }}"><span class="visually-hidden">{{ color.name }}</span></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
     </div>
 </article>

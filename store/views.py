@@ -1,10 +1,12 @@
 from urllib.parse import urlencode
 
+from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.paginator import Paginator
 from django.db.models import Count, OuterRef, Q, Subquery
 from django.shortcuts import get_object_or_404, render
 
+from .constants import RETURN_POLICY
 from .models import Category, Product
 
 HOME_SECTION_SIZE = 4
@@ -25,7 +27,7 @@ def active_products():
     return (
         Product.objects.filter(is_active=True)
         .select_related('category')
-        .prefetch_related('sizes')
+        .prefetch_related('colors__sizes', 'colors__images')
     )
 
 
@@ -118,8 +120,18 @@ def product_detail(request, slug):
         .filter(category=product.category)
         .exclude(pk=product.pk)[:HOME_SECTION_SIZE]
     )
+    colors = list(product.colors.all())
+    # Start on the first colour that still has stock, else the first colour.
+    selected_color = next((c for c in colors if c.is_in_stock), colors[0] if colors else None)
     return render(
         request,
         'store/product_detail.html',
-        {'product': product, 'related_products': related_products},
+        {
+            'product': product,
+            'colors': colors,
+            'selected_color': selected_color,
+            'max_quantity': settings.CART_MAX_QUANTITY,
+            'return_policy': RETURN_POLICY,
+            'related_products': related_products,
+        },
     )

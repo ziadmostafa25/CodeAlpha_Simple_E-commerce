@@ -1,24 +1,57 @@
-﻿"""
-Django settings for zstore project.
+"""
+Django settings for the Z-Store project.
+
+Local development works with no configuration. For a real deployment set the
+environment variables listed in README.md (at least DJANGO_SECRET_KEY,
+DJANGO_DEBUG=0 and DJANGO_ALLOWED_HOSTS).
 """
 
 import os
+from decimal import Decimal
 from pathlib import Path
+
+from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Security
-SECRET_KEY = os.environ.get(
-    "DJANGO_SECRET_KEY",
-    "django-insecure-zstore-local-development-key-change-before-production"
-)
-
-DEBUG = True
-ALLOWED_HOSTS = []
+def env_bool(name, default):
+    return os.environ.get(name, str(default)).strip().lower() in ('1', 'true', 'yes', 'on')
 
 
-# Application definition
+def env_list(name):
+    return [item.strip() for item in os.environ.get(name, '').split(',') if item.strip()]
+
+
+def env_decimal(name, default):
+    value = os.environ.get(name, '').strip()
+    return Decimal(value) if value else default
+
+
+# Security -------------------------------------------------------------------
+DEBUG = env_bool('DJANGO_DEBUG', True)
+
+DEV_SECRET_KEY = 'django-insecure-local-development-key-do-not-use-in-production'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', DEV_SECRET_KEY)
+if not DEBUG and SECRET_KEY == DEV_SECRET_KEY:
+    raise ImproperlyConfigured(
+        'Set DJANGO_SECRET_KEY when DJANGO_DEBUG is off.'
+    )
+
+ALLOWED_HOSTS = env_list('DJANGO_ALLOWED_HOSTS')
+CSRF_TRUSTED_ORIGINS = env_list('DJANGO_CSRF_TRUSTED_ORIGINS')
+
+if not DEBUG:
+    SECURE_SSL_REDIRECT = env_bool('DJANGO_SSL_REDIRECT', True)
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = int(os.environ.get('DJANGO_HSTS_SECONDS', '0'))
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = SECURE_HSTS_SECONDS > 0
+    if env_bool('DJANGO_BEHIND_PROXY', False):
+        SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+
+# Application definition ----------------------------------------------------
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -26,6 +59,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Z-Store apps
     'store',
     'cart',
     'orders',
@@ -54,6 +89,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'cart.context_processors.cart',
             ],
         },
     },
@@ -62,7 +98,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'zstore.wsgi.application'
 
 
-# Database
+# Database ---------------------------------------------------------------------
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -71,7 +107,7 @@ DATABASES = {
 }
 
 
-# Password validation
+# Authentication ------------------------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -87,21 +123,42 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_URL = 'accounts:login'
+LOGIN_REDIRECT_URL = 'store:home'
+LOGOUT_REDIRECT_URL = 'store:home'
 
-# Internationalization
+
+# Internationalization -------------------------------------------------------------
 LANGUAGE_CODE = 'en-us'
+
 TIME_ZONE = 'Africa/Cairo'
+
 USE_I18N = True
+
 USE_TZ = True
 
 
-# Static files
+# Static and media files ---------------------------------------------------------
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+# Target of `python manage.py collectstatic` (needed for deployment only).
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-
-# Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+# Store business rules (change them here or through environment variables) -------
+# Delivery fee in EGP. 0 means delivery is free until you set a real value.
+SHIPPING_FEE = env_decimal('ZSTORE_SHIPPING_FEE', Decimal('0'))
+# Orders at or above this subtotal ship free. Leave unset to disable.
+FREE_SHIPPING_THRESHOLD = env_decimal('ZSTORE_FREE_SHIPPING_THRESHOLD', None)
+# Largest quantity of one item a customer can put in the cart.
+CART_MAX_QUANTITY = 10
+
+# Manual payment details. Leave empty until you have the real values: a method
+# whose details are empty is shown as unavailable at checkout.
+VODAFONE_CASH_NUMBER = os.environ.get('ZSTORE_VODAFONE_CASH_NUMBER', '').strip()
+INSTAPAY_ADDRESS = os.environ.get('ZSTORE_INSTAPAY_ADDRESS', '').strip()

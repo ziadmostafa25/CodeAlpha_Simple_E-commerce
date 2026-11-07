@@ -3,29 +3,34 @@
 
         <div class="footer-about">
             <a class="footer-logo" href="{% url 'store:home' %}" aria-label="Z-Store home">
-                {% include 'partials/logo.html' with logo_class='logo-light' %}
+                {% include 'partials/logo.html' with logo_class='logo-on-dark' %}
             </a>
             <p>Modern clothing for everyday wear, in sizes S to XL.</p>
         </div>
 
-        <nav aria-label="Shop links">
-            <h2 class="footer-heading">Shop</h2>
+        <nav aria-label="Footer">
+            <h2 class="footer-heading">Explore</h2>
             <ul class="footer-list">
-                <li><a href="{% url 'store:product_list' %}">All products</a></li>
-                <li><a href="{% url 'store:home' %}#new-arrivals">New in</a></li>
+                <li><a href="{% url 'store:home' %}">Home</a></li>
+                <li><a href="{% url 'store:product_list' %}">Shop</a></li>
+                <li><a href="{% url 'store:product_list' %}?sort=newest">New Arrivals</a></li>
                 <li><a href="{% url 'store:home' %}#categories">Categories</a></li>
-                <li><a href="{% url 'store:home' %}#featured">Featured</a></li>
             </ul>
         </nav>
 
-        <div>
-            <h2 class="footer-heading">Payment</h2>
+        <nav aria-label="Account">
+            <h2 class="footer-heading">Account</h2>
             <ul class="footer-list">
-                <li>Cash on delivery</li>
-                <li>Vodafone Cash</li>
-                <li>InstaPay</li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'accounts:profile' %}">My account</a></li>
+                <li><a href="{% url 'orders:list' %}">My orders</a></li>
+                {% else %}
+                <li><a href="{% url 'accounts:login' %}">Sign in</a></li>
+                <li><a href="{% url 'accounts:register' %}">Create an account</a></li>
+                {% endif %}
+                <li><a href="{% url 'cart:detail' %}">Cart</a></li>
             </ul>
-        </div>
+        </nav>
 
     </div>
 

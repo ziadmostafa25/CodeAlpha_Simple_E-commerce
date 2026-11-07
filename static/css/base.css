@@ -1,25 +1,29 @@
 /* ==========================================================================
    Z-Store | Base: design tokens, reset, typography, layout
-   Atelier identity: oxblood and porcelain. Bodoni Moda for headlines,
-   Jost for everything else. Square corners throughout.
+   Palette: warm ivory, deep charcoal, muted warm brown, white.
+   Cormorant Garamond for headlines, Jost for everything else.
+   Brown (#A17B55) is for the logo and decoration; text that is small uses
+   the darker brown (#7E5C3C) so it stays readable.
    ========================================================================== */
 
 :root {
     /* Colour */
-    --color-bg: #F7F3F0;
-    --color-surface: #FFFFFF;
-    --color-sand: #E9DED6;
-    --color-line: #E2D6CF;
-    --color-ink: #1C1517;
-    --color-ink-soft: #3B3033;
-    --color-muted: #6B5F62;
-    --color-primary: #5B1E2B;
-    --color-primary-hover: #451621;
-    --color-on-primary: #F7F3F0;
-    --color-on-primary-muted: #E0CDCF;
+    --color-ivory: #F4F0E8;
+    --color-ivory-deep: #EAE3D6;
+    --color-white: #FFFFFF;
+    --color-line: #DDD5C6;
+    --color-charcoal: #292821;
+    --color-charcoal-hover: #3B3A31;
+    --color-charcoal-soft: #46443A;
+    --color-muted: #6A675C;
+    --color-brown: #A17B55;
+    --color-brown-dark: #7E5C3C;
+    --color-on-dark: #F4F0E8;
+    --color-on-dark-muted: #CFC9BA;
 
     /* Typography */
-    --font-display: 'Bodoni Moda', 'Didot', 'Bodoni 72', Georgia, serif;
+    --font-display: 'Cormorant Garamond', 'Cormorant', Georgia,
+        'Times New Roman', serif;
     --font-body: 'Jost', system-ui, -apple-system, 'Segoe UI', Roboto,
         Arial, sans-serif;
 
@@ -27,9 +31,9 @@
     --text-sm: 0.9375rem;
     --text-base: 1.0625rem;
     --text-lg: 1.25rem;
-    --display-md: clamp(1.5rem, 1.25rem + 1vw, 2rem);
-    --display-lg: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
-    --display-xl: clamp(2.75rem, 1.5rem + 5.2vw, 5.25rem);
+    --display-md: clamp(1.75rem, 1.45rem + 1.2vw, 2.375rem);
+    --display-lg: clamp(2.375rem, 1.7rem + 2.8vw, 4rem);
+    --display-xl: clamp(3.25rem, 1.8rem + 5.8vw, 6.25rem);
 
     /* Spacing */
     --space-1: 0.5rem;
@@ -43,7 +47,7 @@
     /* Layout */
     --container: 1280px;
     --gutter: clamp(1.25rem, 4vw, 3rem);
-    --header-height: 64px;
+    --header-height: 68px;
 
     /* Motion */
     --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -51,7 +55,7 @@
 
 @media (min-width: 900px) {
     :root {
-        --header-height: 80px;
+        --header-height: 88px;
     }
 }
 
@@ -68,8 +72,8 @@ html {
 
 body {
     margin: 0;
-    background-color: var(--color-bg);
-    color: var(--color-ink);
+    background-color: var(--color-ivory);
+    color: var(--color-charcoal);
     font-family: var(--font-body);
     font-size: var(--text-base);
     line-height: 1.6;
@@ -88,9 +92,9 @@ ul, ol {
 
 h1, h2, h3 {
     font-family: var(--font-display);
-    font-weight: 400;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
 }
 
 a {
@@ -113,7 +117,7 @@ textarea {
 }
 
 :focus-visible {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid var(--color-brown-dark);
     outline-offset: 3px;
 }
 
@@ -124,6 +128,11 @@ textarea {
 
 .section {
     padding-block: var(--section-space);
+}
+
+.section-white {
+    background: var(--color-white);
+    border-block: 1px solid var(--color-line);
 }
 
 .visually-hidden {
@@ -144,8 +153,8 @@ textarea {
     top: -100px;
     z-index: 100;
     padding: var(--space-1) var(--space-2);
-    background: var(--color-primary);
-    color: var(--color-on-primary);
+    background: var(--color-charcoal);
+    color: var(--color-on-dark);
 }
 
 .skip-link:focus {

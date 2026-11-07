@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Your cart | Z-Store{% endblock %}
+
+{% block content %}
+<section class="section section-page">
+    <div class="container">
+
+        <header class="page-header">
+            <h1 class="page-title">Your cart</h1>
+            <p class="page-meta">{{ cart.count }} item{{ cart.count|pluralize }}</p>
+        </header>
+
+        {% if lines %}
+        <div class="cart-layout">
+
+            <ul class="cart-lines">
+                {% for line in lines %}
+                <li class="cart-line">
+                    <a class="cart-line-media" href="{{ line.product.get_absolute_url }}" tabindex="-1" aria-hidden="true">
+                        {% if line.image_url %}<img src="{{ line.image_url }}" alt="" loading="lazy">{% endif %}
+                    </a>
+
+                    <div>
+                        <h2 class="cart-line-name"><a href="{{ line.product.get_absolute_url }}">{{ line.product.name }}</a></h2>
+                        <p class="cart-line-meta">{{ line.color.name }}, size {{ line.size.size }}</p>
+                        <p class="cart-line-meta">EGP {{ line.unit_price|floatformat:"-2" }} each</p>
+                        {% if line.issue %}<p class="field-error" role="alert">{{ line.issue }}</p>{% endif %}
+                    </div>
+
+                    <p class="cart-line-total">EGP {{ line.subtotal|floatformat:"-2" }}</p>
+
+                    <div class="cart-line-actions">
+                        <form class="quantity-form" method="post" action="{% url 'cart:update' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="size" value="{{ line.size.pk }}">
+                            <label class="visually-hidden" for="qty-{{ line.size.pk }}">Quantity of {{ line.product.name }}, {{ line.color.name }}, size {{ line.size.size }}</label>
+                            <input class="input quantity-input" id="qty-{{ line.size.pk }}" type="number"
+                                   name="quantity" value="{{ line.quantity }}" min="0" inputmode="numeric">
+                            <button class="btn btn-secondary btn-small" type="submit">Update</button>
+                        </form>
+                        <form method="post" action="{% url 'cart:remove' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="size" value="{{ line.size.pk }}">
+                            <button class="link-button" type="submit">Remove</button>
+                        </form>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+
+            <aside class="summary" aria-label="Order summary">
+                <h2 class="summary-title">Summary</h2>
+                <dl class="summary-rows">
+                    <div><dt>Subtotal</dt><dd>EGP {{ cart.subtotal|floatformat:"-2" }}</dd></div>
+                    <div><dt>Delivery</dt><dd>{% if cart.shipping %}EGP {{ cart.shipping|floatformat:"-2" }}{% else %}Free{% endif %}</dd></div>
+                    <div class="summary-total"><dt>Total</dt><dd>EGP {{ cart.total|floatformat:"-2" }}</dd></div>
+                </dl>
+                {% if cart.has_issues %}
+                <p class="field-error" role="alert">Update the items marked above to continue.</p>
+                <span class="btn btn-primary btn-block is-disabled" aria-disabled="true">Checkout</span>
+                {% else %}
+                <a class="btn btn-primary btn-block" href="{% url 'orders:checkout' %}">Checkout</a>
+                {% endif %}
+                <p class="policy-note">{{ return_policy }}</p>
+                <a class="text-link" href="{% url 'store:product_list' %}">Continue shopping</a>
+            </aside>
+
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <p>Your cart is empty.</p>
+            <a class="btn btn-primary" href="{% url 'store:product_list' %}">Start shopping</a>
+        </div>
+        {% endif %}
+
+    </div>
+</section>
+{% endblock %}
