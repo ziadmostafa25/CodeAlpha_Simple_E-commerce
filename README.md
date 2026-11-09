@@ -1,168 +1,220 @@
-# nice-store — Premium Clothing E-Commerce
+# NICE-STORE
 
-A modern, high-end clothing e-commerce web application built with Python and Django. Designed with a **Quiet Luxury / Modern Minimal** visual identity, nice-store provides a seamless editorial shopping experience with product variants, a session-based shopping cart, secure checkout with Egyptian regional validation, manual transfer and Cash on Delivery workflows, customer order management, and a comprehensive Django administration back-office.
+A modern clothing e-commerce web application built with Python and Django as part of the CodeAlpha Full Stack Development Internship.
 
----
+NICE-STORE provides customers with a clean shopping experience where they can browse clothing products, explore colour variants, select available sizes, manage their shopping cart, and place orders. Store administrators can manage products, inventory, and customer orders through Django Admin.
 
-## Brand & UI/UX Direction
+## Features
 
-- **Aesthetic:** Quiet Luxury & Modern Minimal, tailored for premium fashion brands.
-- **Palette:**
-  - Charcoal (`#292821`)
-  - Warm Ivory (`#F8F6F1`)
-  - Soft Beige (`#E8E0D5`)
-  - Muted Brown (`#A17B55`)
-  - Clean White (`#FFFFFF`)
-- **Typography:**
-  - Headings & Brand: `Cormorant Garamond` (editorial serif)
-  - Interface & Body: `Jost` (clean geometric sans-serif)
-- **Design Principles:** Generous breathing room, subtle borders (`1px solid #E2DBD0`), 2px crisp tailoring radii, refined hover micro-interactions, responsive editorial hero section with dedicated campaign imagery.
+### Storefront
+- Product catalogue with categories, search, sorting, and pagination.
+- Detailed product pages with product images and colour variants.
+- Size selection with size-specific stock availability.
+- Featured products and curated homepage sections.
+- Related product recommendations.
 
----
-
-## Key Features
-
-### Storefront & Catalogue
-- **Editorial Homepage:** Two-column hero featuring dedicated campaign imagery (`media/hero/hero-banner.jpg`), curated category showcases, featured pieces, and new arrivals.
-- **Shop & Filtering:** Dynamic category filters, search by title and description, sorting by newest / price asc / price desc, and pagination.
-- **Product Details:**
-  - Interactive multi-photo gallery per color variant.
-  - Live color swatches with dynamic gallery and size switcher.
-  - Numeric suit/blazer sizes (48 to 58) with real-time stock indicators and low-stock urgency hints (`Only X left`).
-  - Interactive quantity selector and single-submit protected Add-to-Cart.
-  - Tailored return and exchange policy transparency.
-  - "You may also like" related product recommendations.
-
-### Cart & Checkout
-- **Session-based Cart:** Frictionless shopping experience for guest visitors without premature session database bloat.
-- **Inventory Protection:** Dynamic pruning and notifications if an item in the cart sells out before checkout.
-- **Tailored Checkout:**
-  - Egyptian mobile phone validation (Vodafone, Orange, Etisalat, WE).
-  - Egyptian governorate selection.
-  - Payment methods: **Cash on Delivery (COD)**, **Vodafone Cash**, and **InstaPay** with interactive instruction accordions.
-  - Order snapshots preserving unit prices, colors, sizes, and product titles against future catalog changes.
-  - Atomic stock reservations and automated restocking on customer cancellation.
+### Shopping Cart & Checkout
+- Session-based shopping cart for guest visitors.
+- Quantity management and stock validation.
+- Egyptian mobile number and governorate validation.
+- Customer address collection.
+- Cash on Delivery (COD), Vodafone Cash, and InstaPay payment options.
+- Manual payment verification. No online payment gateway is integrated.
 
 ### Customer Accounts & Orders
-- **Customer Authentication:** Login, registration, and user profile management.
-- **Order History:** Complete customer order tracking with status badges (`Pending`, `Processing`, `Shipped`, `Delivered`, `Cancelled`).
-- **Customer Self-Service:** Single-click order cancellation while order status is still pending.
+- Customer registration and authentication.
+- Customer profile and order history.
+- Order details and status tracking.
+- Order cancellation when eligible.
 
-### Administration & Operations
-- **Django Admin:** Comprehensive catalogue, variant, inventory, and order management dashboard.
-- **Custom Admin Actions:** Single-click batch status updates (mark as processing, shipped, delivered, or confirmed payment).
-
----
+### Inventory & Administration
+- Product, category, colour variant, and size management.
+- Stock tracking and availability validation.
+- Order snapshots preserving purchased product details and prices.
+- Inventory restoration for eligible cancelled orders.
+- Django Admin interface for managing products, inventory, and orders.
 
 ## Technology Stack
 
-- **Backend:** Python 3.12+, Django 5.x
-- **Frontend:** Semantic HTML5, Modular CSS3 (BEM-inspired custom design system), Vanilla JavaScript (ES6+)
-- **Database:** SQLite (development) / PostgreSQL (production via `dj-database-url`)
-- **Static & Media Storage:** WhiteNoise (static assets), Cloudinary or Local FileSystem (media)
-- **Server / WSGI:** Gunicorn, ASGI/WSGI compatible
+- **Backend:** Python 3.14, Django 6.1.1
+- **Frontend:** HTML5, CSS3, JavaScript (ES6+)
+- **Database:** SQLite (local development), PostgreSQL (production configuration)
+- **Database Configuration:** dj-database-url
+- **Image Processing:** Pillow
+- **Media Storage:** Local FileSystem (development), Cloudinary (production configuration)
+- **Static Files:** WhiteNoise
+- **Production Server:** Gunicorn
+- **Version Control:** Git and GitHub
 
----
+## Requirements
+
+- Python 3.12 or newer
+- Git
+- Packages listed in `requirements.txt`
 
 ## Local Installation (Windows PowerShell)
 
 ### 1. Clone the repository
+
 ```powershell
 git clone https://github.com/ziadmostafa25/CodeAlpha_Simple_E-commerce.git
 cd CodeAlpha_Simple_E-commerce
 ```
 
-### 2. Set up virtual environment
+### 2. Create and activate a virtual environment
+
 ```powershell
-python -m venv venv
+py -m venv venv
 .\venv\Scripts\Activate.ps1
 ```
 
 ### 3. Install dependencies
+
 ```powershell
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
-### 4. Run migrations
+### 4. Apply database migrations
+
 ```powershell
 python manage.py migrate
 ```
 
-### 5. Create a superuser (for Django Admin)
+### 5. Create an administrator account
+
 ```powershell
 python manage.py createsuperuser
 ```
 
-### 6. Run the local development server
+### 6. Start the development server
+
 ```powershell
 python manage.py runserver
 ```
 
-Open your browser at [http://127.0.0.1:8000/](http://127.0.0.1:8000/) for the store, and [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/) for the administration portal.
+Open the following addresses:
 
----
+- **Storefront:** http://127.0.0.1:8000/
+- **Admin Dashboard:** http://127.0.0.1:8000/admin/
 
-## Running the Automated Test Suite
+During local development, uploaded media files are stored in the local `media/` directory.
 
-The project includes an extensive test suite covering models, views, cart calculations, checkout flows, security policies, and administrative actions:
+## Running Tests
+
+Run the following commands to check the project and execute its automated test suite:
 
 ```powershell
+python manage.py check
+python manage.py makemigrations --check --dry-run
 python manage.py test
 ```
 
-To run a fast system check:
-```powershell
-python manage.py check
+## Environment Variables
+
+The project uses environment variables for configuration.
+
+The `.env.example` file provides a reference template. It is not loaded automatically by Django; configure the variables directly in your environment or hosting provider.
+
+| Variable | Purpose |
+|---|---|
+| `DJANGO_DEBUG` | Enables or disables debug mode |
+| `DJANGO_SECRET_KEY` | Django secret key; required for production |
+| `DJANGO_ALLOWED_HOSTS` | Comma-separated allowed hostnames |
+| `DJANGO_CSRF_TRUSTED_ORIGINS` | Trusted HTTPS origins |
+| `DJANGO_SSL_REDIRECT` | Controls HTTPS redirection |
+| `DJANGO_HSTS_SECONDS` | HSTS duration |
+| `DJANGO_BEHIND_PROXY` | Enables proxy HTTPS handling when required |
+| `DATABASE_URL` | PostgreSQL database connection URL |
+| `CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name |
+| `CLOUDINARY_API_KEY` | Cloudinary API key |
+| `CLOUDINARY_API_SECRET` | Cloudinary API secret |
+| `ZSTORE_SHIPPING_FEE` | Delivery fee in EGP |
+| `ZSTORE_FREE_SHIPPING_THRESHOLD` | Order subtotal required for free delivery |
+| `ZSTORE_VODAFONE_CASH_NUMBER` | Vodafone Cash payment number |
+| `ZSTORE_INSTAPAY_ADDRESS` | InstaPay payment address |
+
+See `.env.example` for the configuration template.
+
+**Security:** Never commit `.env` files, production credentials, secret keys, API credentials, or database passwords.
+
+## Managing the Store
+
+1. **Products:** Create and manage products through Django Admin.
+2. **Categories:** Organize products into categories.
+3. **Colour Variants:** Configure product colours and their associated images.
+4. **Sizes & Inventory:** Set available sizes and stock quantities.
+5. **Orders:** Review customer orders and update their statuses.
+6. **Payments:** Review and verify manual payment transfers.
+
+## Deployment
+
+The project includes configuration for production deployment using:
+
+- **Render:** Web application hosting.
+- **Neon / PostgreSQL:** Production database.
+- **Cloudinary:** Product image and media storage.
+- **WhiteNoise:** Static file serving.
+- **Gunicorn:** Production application server.
+
+Before deployment:
+
+1. Configure the required production environment variables.
+2. Set `DJANGO_DEBUG=0`.
+3. Generate and configure a secure `DJANGO_SECRET_KEY`.
+4. Configure allowed hosts and trusted CSRF origins.
+5. Set up PostgreSQL through `DATABASE_URL`.
+6. Configure Cloudinary credentials.
+7. Run database migrations:
+
+```bash
+python manage.py migrate
 ```
 
----
+8. Collect static files:
 
-## Configuration & Environment Variables
+```bash
+python manage.py collectstatic --noinput
+```
 
-Create a `.env` file in the project root (reference `.env.example`):
+9. Run Django deployment checks:
 
-| Variable | Description | Default |
-|---|---|---|
-| `DJANGO_DEBUG` | `1` for development, `0` for production | `1` |
-| `DJANGO_SECRET_KEY` | Secret cryptographic key for Django | Built-in dev key |
-| `DJANGO_ALLOWED_HOSTS` | Comma-separated list of allowed hostnames | `127.0.0.1,localhost` |
-| `DATABASE_URL` | PostgreSQL connection URL | SQLite fallback |
-| `nice-store_SHIPPING_FEE` | Flat delivery fee in EGP | `0` (Free delivery) |
-| `nice-store_FREE_SHIPPING_THRESHOLD` | Subtotal amount for free shipping qualification | Unset |
-| `nice-store_VODAFONE_CASH_NUMBER` | Vodafone Cash merchant wallet number | Displayed at checkout |
-| `nice-store_INSTAPAY_ADDRESS` | InstaPay username/address | Displayed at checkout |
-| `CLOUDINARY_CLOUD_NAME` | Cloudinary Cloud name (production) | Unset |
-| `CLOUDINARY_API_KEY` | Cloudinary API Key (production) | Unset |
-| `CLOUDINARY_API_SECRET` | Cloudinary API Secret (production) | Unset |
+```bash
+python manage.py check --deploy
+```
 
----
+**Deployment Status:** Production configuration is included in the project, but hosting, database, storage credentials, and production environment variables must be configured before public deployment.
+
+Free hosting services may sleep after inactivity and may not be suitable for uninterrupted commercial order processing.
 
 ## Project Structure
 
-```
+```text
 CodeAlpha_Simple_E-commerce/
-├── accounts/           # User authentication, profiles, registration
-├── cart/               # Session-based cart, cart calculations, line management
-├── orders/             # Checkout, order processing, snapshots, payment handlers
-├── store/              # Catalogue, categories, products, color variants, sizes
-├── templates/          # Responsive Django templates
-│   ├── accounts/       # Login, register, profile
-│   ├── cart/           # Shopping cart view
-│   ├── orders/         # Checkout, order confirmation, detail, history
-│   ├── partials/       # Header, footer, logo, field widgets, product cards
-│   └── store/          # Homepage, product list, product detail
-├── static/             # Static assets
-│   ├── css/            # base.css, components.css, pages.css
-│   ├── js/             # main.js (swatches, galleries, checkout tabs)
-│   └── images/         # Brand logos and payment badges
-├── media/              # Uploaded media (products, hero campaign image)
-├── nice-store/             # Project settings, URLs, WSGI/ASGI configuration
-├── manage.py           # Django management script
-└── requirements.txt    # Project dependencies
+│
+├── accounts/       # Authentication and customer accounts
+├── cart/           # Shopping cart functionality
+├── orders/         # Checkout, orders, and payment workflows
+├── store/          # Products, categories, variants, and inventory
+├── templates/      # Django HTML templates
+├── static/         # CSS, JavaScript, and static assets
+├── zstore/         # Django settings, URLs, and configuration
+├── manage.py
+├── requirements.txt
+├── .env.example
+└── README.md
 ```
+
+## Developer
+
+**Ziad Mostafa**
+
+Computer Science and Information Systems Graduate  
+Modern Academy — 2026
+
+GitHub: https://github.com/ziadmostafa25
 
 ---
 
-## License
+Developed as part of the CodeAlpha Full Stack Development Internship.
 
-This project was developed by Ziad Mostafa as part of the CodeAlpha Full Stack Development Internship. Reusable as a template for clothing and fashion e-commerce applications.
+Never commit `db.sqlite3`, `media/`, `venv/`, `.env`, or production credentials.
