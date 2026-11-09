@@ -1,49 +1,100 @@
+
 {% extends 'base.html' %}
 
-{% block title %}Order {{ order.reference }} | Z-Store{% endblock %}
+{% block title %}Order {{ order.reference }} | nice-store{% endblock %}
 
 {% block content %}
-<section class="section section-page">
+<section class="section section-page order-detail-page">
     <div class="container narrow">
 
         <nav class="breadcrumb" aria-label="Breadcrumb">
             <ol>
+                <li><a href="{% url 'store:home' %}">Home</a></li>
                 <li><a href="{% url 'orders:list' %}">My orders</a></li>
                 <li aria-current="page">{{ order.reference }}</li>
             </ol>
         </nav>
 
-        <header class="page-header">
-            <h1 class="page-title">Order {{ order.reference }}</h1>
-            <span class="badge badge-{{ order.status }}">{{ order.get_status_display }}</span>
+        <header class="page-header order-detail-header">
+            <div>
+                <p class="eyebrow">ORDER DETAILS</p>
+                <h1 class="page-title">Order {{ order.reference }}</h1>
+                <p class="page-meta">
+                    Placed on {{ order.created_at|date:"j M Y, H:i" }}
+                </p>
+            </div>
+
+            <span class="badge badge-{{ order.status }}">
+                {{ order.get_status_display }}
+            </span>
         </header>
 
-        <p class="page-meta">Placed on {{ order.created_at|date:"j M Y, H:i" }}</p>
+        <!-- Items and totals -->
+        <section class="order-detail-section">
+            <p class="eyebrow">YOUR PURCHASE</p>
+            <h2 class="section-title">Order summary</h2>
+            {% include 'orders/order_summary.html' %}
+        </section>
 
-        {% include 'orders/order_summary.html' %}
+        <!-- Delivery information -->
+        <section class="panel order-info-panel">
+            <div class="order-panel-heading">
+                <p class="eyebrow">SHIPPING INFORMATION</p>
+                <h2 class="panel-title">Delivery details</h2>
+            </div>
 
-        <div class="panel">
-            <h2 class="panel-title">Delivery</h2>
-            <p>{{ order.customer_name }}<br>{{ order.phone }}<br>{{ order.email }}</p>
-            <p>{{ order.address|linebreaksbr }}<br>{{ order.governorate }}</p>
-        </div>
+            <div class="order-info-content">
+                <p class="order-customer-name">{{ order.customer_name }}</p>
+                <p>{{ order.phone }}</p>
+                <p>{{ order.email }}</p>
 
-        <div class="panel">
-            <h2 class="panel-title">Payment: {{ order.get_payment_method_display }}</h2>
-            <p>Status: {{ order.get_payment_status_display }}</p>
+                <div class="order-info-divider"></div>
+
+                <p>{{ order.address|linebreaksbr }}</p>
+                <p>{{ order.governorate }}</p>
+            </div>
+        </section>
+
+        <!-- Payment information -->
+        <section class="panel order-info-panel">
+            <div class="order-panel-heading">
+                <p class="eyebrow">PAYMENT INFORMATION</p>
+                <h2 class="panel-title">
+                    {{ order.get_payment_method_display }}
+                </h2>
+            </div>
+
+            <p class="order-payment-status">
+                Payment status:
+                <strong>{{ order.get_payment_status_display }}</strong>
+            </p>
+
             {% if not order.is_cancelled and order.payment_status == 'pending' %}
-            {% include 'orders/payment_instructions.html' with option=payment %}
+                <div class="order-payment-instructions">
+                    {% include 'orders/payment_instructions.html' with option=payment %}
+                </div>
             {% endif %}
-        </div>
+        </section>
 
         <p class="policy-note">{{ return_policy }}</p>
 
-        {% if order.customer_can_cancel %}
-        <form method="post" action="{% url 'orders:cancel' order.reference %}" data-single-submit>
-            {% csrf_token %}
-            <button class="btn btn-secondary" type="submit">Cancel this order</button>
-        </form>
-        {% endif %}
+        <div class="order-detail-actions">
+            <a class="btn btn-secondary"
+               href="{% url 'orders:list' %}">
+                Back to my orders
+            </a>
+
+            {% if order.customer_can_cancel %}
+            <form method="post"
+                  action="{% url 'orders:cancel' order.reference %}"
+                  data-single-submit>
+                {% csrf_token %}
+                <button class="btn btn-secondary" type="submit">
+                    Cancel this order
+                </button>
+            </form>
+            {% endif %}
+        </div>
 
     </div>
 </section>

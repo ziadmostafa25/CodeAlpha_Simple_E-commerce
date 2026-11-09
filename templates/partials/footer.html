@@ -1,40 +1,43 @@
-<footer class="site-footer">
-    <div class="container footer-grid">
 
-        <div class="footer-about">
-            <a class="footer-logo" href="{% url 'store:home' %}" aria-label="Z-Store home">
-                {% include 'partials/logo.html' with logo_class='logo-on-dark' %}
-            </a>
-            <p>Modern clothing for everyday wear, in sizes S to XL.</p>
+<footer class="site-footer">
+    <div class="container">
+
+        <div class="footer-grid">
+
+            <div class="footer-about">
+                <a class="footer-brand" href="{% url 'store:home' %}">NICE-STORE</a>
+                <p>
+                    Quiet clothes, made to last.
+                    Simple, well-cut pieces for everyday wear.
+                </p>
+            </div>
+
+            <div class="footer-column">
+                <h2 class="footer-heading">Explore</h2>
+                <ul class="footer-list">
+                    <li><a href="{% url 'store:home' %}">Home</a></li>
+                    <li><a href="{% url 'store:product_list' %}">Shop all</a></li>
+                    <li><a href="{% url 'store:home' %}#categories">Categories</a></li>
+                    <li><a href="{% url 'store:home' %}#new-arrivals">New arrivals</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h2 class="footer-heading">Customer care</h2>
+                <ul class="footer-list">
+                    <li>Customer support</li>
+                    <li>Easy shopping</li>
+                    <li>Sizes 48-58</li>
+                </ul>
+            </div>
+
         </div>
 
-        <nav aria-label="Footer">
-            <h2 class="footer-heading">Explore</h2>
-            <ul class="footer-list">
-                <li><a href="{% url 'store:home' %}">Home</a></li>
-                <li><a href="{% url 'store:product_list' %}">Shop</a></li>
-                <li><a href="{% url 'store:product_list' %}?sort=newest">New Arrivals</a></li>
-                <li><a href="{% url 'store:home' %}#categories">Categories</a></li>
-            </ul>
-        </nav>
+        <div class="footer-bottom">
+            <p>
+                &copy; {% now "Y" %} NICE-STORE. All rights reserved.
+            </p>
+        </div>
 
-        <nav aria-label="Account">
-            <h2 class="footer-heading">Account</h2>
-            <ul class="footer-list">
-                {% if user.is_authenticated %}
-                <li><a href="{% url 'accounts:profile' %}">My account</a></li>
-                <li><a href="{% url 'orders:list' %}">My orders</a></li>
-                {% else %}
-                <li><a href="{% url 'accounts:login' %}">Sign in</a></li>
-                <li><a href="{% url 'accounts:register' %}">Create an account</a></li>
-                {% endif %}
-                <li><a href="{% url 'cart:detail' %}">Cart</a></li>
-            </ul>
-        </nav>
-
-    </div>
-
-    <div class="container footer-bottom">
-        <p>&copy; {% now "Y" %} Z-Store. All rights reserved.</p>
     </div>
 </footer>

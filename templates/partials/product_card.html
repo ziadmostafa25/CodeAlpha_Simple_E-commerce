@@ -1,33 +1,63 @@
+
 <article class="product-card">
-    <a class="product-card-media" href="{{ product.get_absolute_url }}" tabindex="-1" aria-hidden="true">
+    <a
+        class="product-card-media"
+        href="{{ product.get_absolute_url }}"
+        tabindex="-1"
+        aria-hidden="true"
+    >
         {% if product.image %}
-        <img src="{{ product.image.url }}" alt="" loading="lazy">
+            <img
+                src="{{ product.image.url }}"
+                alt="{{ product.name }}"
+                loading="lazy"
+                decoding="async"
+            >
         {% else %}
-        <span class="placeholder">No image</span>
+            <span class="placeholder">Image coming soon</span>
         {% endif %}
+
         {% if not product.is_in_stock %}
-        <span class="product-card-tag">Sold out</span>
+            <span class="product-card-tag">Sold out</span>
         {% endif %}
     </a>
 
     <div class="product-card-body">
         <div class="product-card-head">
             <h3 class="product-card-name">
-                <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+                <a href="{{ product.get_absolute_url }}">
+                    {{ product.name }}
+                </a>
             </h3>
-            <p class="product-card-price">EGP {{ product.price|floatformat:"-2" }}</p>
+
+            <p class="product-card-price">
+                EGP {{ product.price|floatformat:"-2" }}
+            </p>
         </div>
+
         <p class="product-card-sizes">
-            {% if product.is_in_stock %}{{ product.available_sizes|join:", " }}{% else %}Currently unavailable{% endif %}
+            {% if product.is_in_stock %}
+                {{ product.available_sizes|join:", " }}
+            {% else %}
+                Currently unavailable
+            {% endif %}
         </p>
+
         {% with colors=product.colors.all %}
-        {% if colors|length > 1 %}
-        <ul class="swatch-dots" aria-label="Available colours">
-            {% for color in colors|slice:":6" %}
-            <li class="swatch-dot" style="--swatch: {{ color.hex_code }}"><span class="visually-hidden">{{ color.name }}</span></li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+            {% if colors|length > 1 %}
+                <ul class="swatch-dots" aria-label="Available colours">
+                    {% for color in colors|slice:":6" %}
+                        <li
+                            class="swatch-dot"
+                            style="--swatch: {{ color.hex_code }}"
+                        >
+                            <span class="visually-hidden">
+                                {{ color.name }}
+                            </span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
         {% endwith %}
     </div>
 </article>

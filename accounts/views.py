@@ -1,4 +1,4 @@
-from django.contrib import messages
+﻿from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
@@ -30,7 +30,7 @@ def register(request):
     if request.method == 'POST' and form.is_valid():
         user = form.save()
         login(request, user)
-        messages.success(request, 'Welcome to Z-Store. Your account is ready.')
+        messages.success(request, 'Welcome to NICE-STORE. Your account is ready.')
         return redirect(_next_url(request, 'accounts:profile'))
     return render(
         request,

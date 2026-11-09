@@ -1,33 +1,80 @@
+
 {% extends 'base.html' %}
 
-{% block title %}Order {{ order.reference }} | Z-Store{% endblock %}
+{% block title %}Order {{ order.reference }} | nice-store{% endblock %}
 
 {% block content %}
-<section class="section section-page">
+<section class="section section-page order-success-page">
     <div class="container narrow">
 
         <header class="confirmation-head">
-            <h1 class="page-title">Thank you, your order is placed.</h1>
-            <p class="confirmation-reference">Order reference <strong>{{ order.reference }}</strong></p>
-            <p>We will contact you on {{ order.phone }} about your delivery.</p>
+            <div class="confirmation-icon" aria-hidden="true">
+                <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="24" cy="24" r="21" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M14 24.5L21 31L34 17" stroke="currentColor"
+                          stroke-width="1.8" stroke-linecap="round"
+                          stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <p class="eyebrow">ORDER CONFIRMED</p>
+
+            <h1 class="page-title">Thank you for your order.</h1>
+
+            <p class="confirmation-reference">
+                Order reference
+                <strong>{{ order.reference }}</strong>
+            </p>
+
+            <p class="confirmation-message">
+                Your order has been placed successfully.
+                We will contact you on <strong>{{ order.phone }}</strong>
+                about your delivery.
+            </p>
         </header>
 
-        <div class="panel">
+        <!-- Payment information -->
+        <section class="panel confirmation-payment">
+            <p class="eyebrow">PAYMENT DETAILS</p>
+
             <h2 class="panel-title">{{ payment.label }}</h2>
+
             {% include 'orders/payment_instructions.html' with option=payment %}
-            <p class="payment-total">Amount to pay: <strong>EGP {{ order.total|floatformat:"-2" }}</strong></p>
+
+            <div class="payment-total">
+                <span>Amount to pay</span>
+                <strong>EGP {{ order.total|floatformat:"-2" }}</strong>
+            </div>
+
             {% if order.payment_method != 'cod' %}
-            <p class="field-help">Quote {{ order.reference }} when you contact the store about your transfer.</p>
+            <p class="field-help">
+                Please quote order reference
+                <strong>{{ order.reference }}</strong>
+                when you contact the store about your transfer.
+            </p>
             {% endif %}
+        </section>
+
+        <!-- Order details -->
+        <section class="confirmation-order-details">
+            <p class="eyebrow">YOUR PURCHASE</p>
+            <h2 class="section-title">Order summary</h2>
+
+            {% include 'orders/order_summary.html' %}
+        </section>
+
+        <div class="confirmation-policy">
+            <p class="policy-note">{{ return_policy }}</p>
         </div>
 
-        {% include 'orders/order_summary.html' %}
+        <div class="button-row confirmation-actions">
+            <a class="btn btn-primary" href="{{ order.get_absolute_url }}">
+                View order details
+            </a>
 
-        <p class="policy-note">{{ return_policy }}</p>
-
-        <div class="button-row">
-            <a class="btn btn-primary" href="{{ order.get_absolute_url }}">View order</a>
-            <a class="btn btn-secondary" href="{% url 'store:product_list' %}">Continue shopping</a>
+            <a class="btn btn-secondary" href="{% url 'store:product_list' %}">
+                Continue shopping
+            </a>
         </div>
 
     </div>

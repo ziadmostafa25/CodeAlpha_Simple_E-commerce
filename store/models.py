@@ -1,3 +1,4 @@
+
 from decimal import Decimal
 
 from django.core.validators import MinValueValidator, RegexValidator
@@ -11,7 +12,9 @@ class Category(models.Model):
     name = models.CharField(max_length=80, unique=True)
     slug = models.SlugField(max_length=80, unique=True)
     image = models.ImageField(
-        upload_to='categories/', blank=True, validators=IMAGE_VALIDATORS
+        upload_to='categories/',
+        blank=True,
+        validators=IMAGE_VALIDATORS,
     )
 
     class Meta:
@@ -36,8 +39,10 @@ class Product(models.Model):
         decimal_places=2,
         validators=[MinValueValidator(Decimal('0.01'))],
     )
-    # Default image: used for cards and as the fallback when a colour has no photos.
-    image = models.ImageField(upload_to='products/', validators=IMAGE_VALIDATORS)
+    image = models.ImageField(
+        upload_to='products/',
+        validators=IMAGE_VALIDATORS,
+    )
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -53,14 +58,17 @@ class Product(models.Model):
 
     @property
     def available_sizes(self):
-        """Sizes (S, M, L, XL order) that are in stock in at least one colour."""
+        """Numeric sizes that are in stock in at least one colour."""
         in_stock = {
             item.size
             for color in self.colors.all()
             for item in color.sizes.all()
             if item.stock > 0
         }
-        return [size for size in ProductSize.Size.values if size in in_stock]
+        return [
+            size for size in ProductSize.Size.values
+            if size in in_stock
+        ]
 
     @property
     def is_in_stock(self):
@@ -102,7 +110,7 @@ class ProductColor(models.Model):
 
     @property
     def ordered_sizes(self):
-        """Sizes in S, M, L, XL order (uses prefetched sizes when available)."""
+        """Numeric sizes in ascending order."""
         size_order = ProductSize.Size.values
         return sorted(
             self.sizes.all(),
@@ -119,8 +127,12 @@ class ProductColor(models.Model):
 
     @property
     def gallery_urls(self):
-        """This colour's photos, or the product's default image when it has none."""
-        urls = [image.image.url for image in self.images.all() if image.image]
+        """This colour's photos, or the product's default image."""
+        urls = [
+            image.image.url
+            for image in self.images.all()
+            if image.image
+        ]
         if not urls and self.product.image:
             urls = [self.product.image.url]
         return urls
@@ -133,7 +145,8 @@ class ColorImage(models.Model):
         related_name='images',
     )
     image = models.ImageField(
-        upload_to='products/colors/', validators=IMAGE_VALIDATORS
+        upload_to='products/colors/',
+        validators=IMAGE_VALIDATORS,
     )
     sort_order = models.PositiveSmallIntegerField(default=0)
 
@@ -146,17 +159,22 @@ class ColorImage(models.Model):
 
 class ProductSize(models.Model):
     class Size(models.TextChoices):
-        SMALL = 'S', 'S'
-        MEDIUM = 'M', 'M'
-        LARGE = 'L', 'L'
-        EXTRA_LARGE = 'XL', 'XL'
+        SIZE_48 = '48', '48'
+        SIZE_50 = '50', '50'
+        SIZE_52 = '52', '52'
+        SIZE_54 = '54', '54'
+        SIZE_56 = '56', '56'
+        SIZE_58 = '58', '58'
 
     color = models.ForeignKey(
         ProductColor,
         on_delete=models.CASCADE,
         related_name='sizes',
     )
-    size = models.CharField(max_length=2, choices=Size.choices)
+    size = models.CharField(
+        max_length=2,
+        choices=Size.choices,
+    )
     stock = models.PositiveIntegerField(default=0)
 
     class Meta:
@@ -177,3 +195,4 @@ class ProductSize(models.Model):
     @property
     def is_in_stock(self):
         return self.stock > 0
+

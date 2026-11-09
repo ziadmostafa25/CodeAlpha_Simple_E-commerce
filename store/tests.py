@@ -15,20 +15,20 @@ class ProductModelTests(TestCase):
     def setUp(self):
         self.category = create_category()
 
-    def test_sizes_are_ordered_s_m_l_xl(self):
+    def test_sizes_are_ordered_numerically(self):
         product = create_product(
-            self.category, 'Coat', stock={'XL': 1, 'S': 1, 'L': 1, 'M': 1}
+            self.category, 'Coat', stock={'54': 1, '48': 1, '52': 1, '50': 1}
         )
         color = product.colors.get()
-        self.assertEqual([item.size for item in color.ordered_sizes], ['S', 'M', 'L', 'XL'])
+        self.assertEqual([item.size for item in color.ordered_sizes], ['48', '50', '52', '54'])
 
     def test_sold_out_sizes_are_not_available(self):
-        product = create_product(self.category, 'Coat', stock={'S': 0, 'M': 3})
-        self.assertEqual(product.available_sizes, ['M'])
+        product = create_product(self.category, 'Coat', stock={'48': 0, '50': 3})
+        self.assertEqual(product.available_sizes, ['50'])
         self.assertTrue(product.is_in_stock)
 
     def test_product_with_no_stock_is_not_in_stock(self):
-        product = create_product(self.category, 'Coat', stock={'S': 0, 'M': 0})
+        product = create_product(self.category, 'Coat', stock={'48': 0, '50': 0})
         self.assertFalse(product.is_in_stock)
 
     def test_product_without_colours_is_not_in_stock(self):
@@ -50,19 +50,19 @@ class ColourVariantTests(TestCase):
             self.category,
             'Classic Jacket',
             colors={
-                'Black': {'S': 5, 'M': 3, 'L': 0},
-                'Brown': {'S': 2, 'M': 0, 'L': 4},
-                'Beige': {'S': 0, 'M': 0, 'L': 0},
+                'Black': {'48': 5, '50': 3, '52': 0},
+                'Brown': {'48': 2, '50': 0, '52': 4},
+                'Beige': {'48': 0, '50': 0, '52': 0},
             },
         )
 
     def test_each_colour_keeps_its_own_stock(self):
-        self.assertEqual(get_size(self.product, 'S', 'Black').stock, 5)
-        self.assertEqual(get_size(self.product, 'S', 'Brown').stock, 2)
-        self.assertEqual(get_size(self.product, 'L', 'Beige').stock, 0)
+        self.assertEqual(get_size(self.product, '48', 'Black').stock, 5)
+        self.assertEqual(get_size(self.product, '48', 'Brown').stock, 2)
+        self.assertEqual(get_size(self.product, '52', 'Beige').stock, 0)
 
     def test_product_sizes_combine_every_colour_that_has_stock(self):
-        self.assertEqual(self.product.available_sizes, ['S', 'M', 'L'])
+        self.assertEqual(self.product.available_sizes, ['48', '50', '52'])
 
     def test_a_colour_with_no_stock_is_sold_out(self):
         colors = {color.name: color for color in self.product.colors.all()}
@@ -93,11 +93,11 @@ class ColourVariantTests(TestCase):
     def test_a_size_cannot_repeat_inside_one_colour(self):
         black = self.product.colors.get(name='Black')
         with self.assertRaises(IntegrityError), transaction.atomic():
-            ProductSize.objects.create(color=black, size='S', stock=1)
+            ProductSize.objects.create(color=black, size='48', stock=1)
 
     def test_the_same_size_can_exist_in_two_colours(self):
         self.assertEqual(
-            ProductSize.objects.filter(color__product=self.product, size='S').count(), 3
+            ProductSize.objects.filter(color__product=self.product, size='48').count(), 3
         )
 
     def test_a_colour_name_cannot_repeat_for_one_product(self):
@@ -120,7 +120,7 @@ class ColourVariantTests(TestCase):
         create_product(
             self.category,
             'Second',
-            colors={'Black': {'S': 0}, 'Brown': {'S': 3}},
+            colors={'Black': {'48': 0}, 'Brown': {'48': 3}},
         )
         response = self.client.get(reverse('store:product_detail', kwargs={'slug': 'second'}))
         self.assertEqual(response.context['selected_color'].name, 'Brown')
@@ -208,7 +208,7 @@ class ProductDetailViewTests(TestCase):
 
     def test_shows_product_details(self):
         product = create_product(
-            self.category, 'Classic Jacket', price='850.50', stock={'S': 0, 'M': 2}
+            self.category, 'Classic Jacket', price='850.50', stock={'48': 0, '50': 2}
         )
         response = self.client.get(product.get_absolute_url())
         self.assertEqual(response.status_code, 200)
@@ -225,7 +225,7 @@ class ProductDetailViewTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_sold_out_product_shows_notice_and_no_purchase_form(self):
-        product = create_product(self.category, 'Coat', stock={'M': 0})
+        product = create_product(self.category, 'Coat', stock={'50': 0})
         response = self.client.get(product.get_absolute_url())
         self.assertContains(response, 'currently sold out')
         self.assertNotContains(response, 'data-purchase')
@@ -310,16 +310,16 @@ class SiteChromeTests(TestCase):
         newest = self.client.get(reverse('store:product_list'), {'sort': 'newest'})
         self.assertContains(newest, 'aria-current="page">New Arrivals<')
 
-    def test_hero_shows_the_featured_product_image(self):
+    def test_hero_uses_dedicated_hero_banner_image(self):
         featured = create_product(
             self.category, 'Hero Coat', is_featured=True, image='products/hero.jpg'
         )
         response = self.client.get(reverse('store:home'))
         self.assertEqual(response.context['hero_product'], featured)
-        self.assertContains(response, '/media/products/hero.jpg')
+        self.assertContains(response, 'hero/hero-banner.jpg')
 
     def test_cart_count_in_header_follows_the_cart(self):
-        size = get_size(self.product, 'M')
+        size = get_size(self.product, '50')
         self.client.post(reverse('cart:add'), {'size': size.pk, 'quantity': 2})
         response = self.client.get(reverse('store:home'))
         self.assertContains(response, 'aria-label="Cart, 2 items"')
@@ -365,7 +365,7 @@ class StoreAdminTests(TestCase):
     def setUp(self):
         self.admin = get_user_model().objects.create_superuser('boss', 'boss@example.com', 'pass-12345')
         self.product = create_product(
-            create_category(), 'Classic Jacket', colors={'Black': {'S': 5, 'M': 0}}
+            create_category(), 'Classic Jacket', colors={'Black': {'48': 5, '50': 0}}
         )
 
     def test_staff_can_open_the_catalogue_pages(self):
@@ -383,7 +383,7 @@ class StoreAdminTests(TestCase):
                 self.assertEqual(self.client.get(url).status_code, 200)
 
     def test_product_list_shows_total_stock_across_colours(self):
-        create_product(create_category(), 'Other', colors={'Black': {'S': 2}, 'Brown': {'S': 3}})
+        create_product(create_category(), 'Other', colors={'Black': {'48': 2}, 'Brown': {'48': 3}})
         self.client.force_login(self.admin)
         response = self.client.get(reverse('admin:store_product_changelist'))
         self.assertContains(response, '<td class="field-total_stock">5</td>', count=2)
@@ -392,3 +392,4 @@ class StoreAdminTests(TestCase):
         response = self.client.get(reverse('admin:store_product_changelist'))
         self.assertEqual(response.status_code, 302)
         self.assertIn('/admin/login/', response['Location'])
+

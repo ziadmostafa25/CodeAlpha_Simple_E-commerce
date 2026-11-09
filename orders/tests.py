@@ -1,4 +1,4 @@
-import uuid
+﻿import uuid
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
@@ -28,11 +28,11 @@ class OrderTestCase(TestCase):
             create_category(),
             'Classic Jacket',
             price='850',
-            colors={'Black': {'S': 5, 'M': 3}, 'Brown': {'S': 2}},
+            colors={'Black': {'48': 5, '50': 3}, 'Brown': {'48': 2}},
         )
-        self.black_s = get_size(self.product, 'S', 'Black')
-        self.black_m = get_size(self.product, 'M', 'Black')
-        self.brown_s = get_size(self.product, 'S', 'Brown')
+        self.black_s = get_size(self.product, '48', 'Black')
+        self.black_m = get_size(self.product, '50', 'Black')
+        self.brown_s = get_size(self.product, '48', 'Brown')
         self.client.force_login(self.user)
 
     def add_to_cart(self, size, quantity=1):
@@ -94,7 +94,7 @@ class CheckoutAccessTests(OrderTestCase):
     def test_checkout_page_shows_the_summary_policy_and_prefilled_details(self):
         self.add_to_cart(self.black_s, 2)
         response = self.client.get(reverse('orders:checkout'))
-        self.assertContains(response, 'Black, size S')
+        self.assertContains(response, 'Black, size 48')
         self.assertContains(response, 'EGP 1700')
         self.assertContains(response, 'Return and exchange shipping costs are paid by the customer.')
         self.assertContains(response, 'value="Sara"')
@@ -216,8 +216,8 @@ class PlacingAnOrderTests(OrderTestCase):
         self.assertTrue(order.stock_reserved)
 
         items = {(item.color_name, item.size_label): item for item in order.items.all()}
-        self.assertEqual(set(items), {('Black', 'S'), ('Brown', 'S')})
-        black = items[('Black', 'S')]
+        self.assertEqual(set(items), {('Black', '48'), ('Brown', '48')})
+        black = items[('Black', '48')]
         self.assertEqual((black.product_name, black.quantity, black.unit_price), ('Classic Jacket', 2, Decimal('850')))
         self.assertEqual(order.subtotal, Decimal('2550'))
         self.assertEqual(order.total, Decimal('2550'))
@@ -273,7 +273,7 @@ class PlacingAnOrderTests(OrderTestCase):
         page = self.client.get(response['Location'])
         order = Order.objects.get()
         self.assertContains(page, order.reference)
-        self.assertContains(page, 'Black, size S')
+        self.assertContains(page, 'Black, size 48')
         self.assertContains(page, 'Return and exchange shipping costs')
 
 
@@ -411,7 +411,7 @@ class CancellationTests(OrderTestCase):
         order = self.make_order(quantity=1, size=self.brown_s)
         self.brown_s.delete()
         self.assertTrue(cancel_order(order))
-        self.assertEqual(order.items.get().size_label, 'S')
+        self.assertEqual(order.items.get().size_label, '48')
 
 
 class OrderPrivacyTests(OrderTestCase):
@@ -454,7 +454,7 @@ class OrderPrivacyTests(OrderTestCase):
 
     def test_order_detail_shows_the_details_a_customer_needs(self):
         response = self.client.get(self.mine.get_absolute_url())
-        self.assertContains(response, 'Black, size S')
+        self.assertContains(response, 'Black, size 48')
         self.assertContains(response, 'Pending')
         self.assertContains(response, 'Cash on delivery')
         self.assertContains(response, 'Cancel this order')
@@ -578,3 +578,4 @@ class OrderAdminTests(OrderTestCase):
         self.assertNotContains(
             self.client.get(self.changelist + '?status__exact=shipped'), self.order.reference
         )
+

@@ -1,33 +1,81 @@
+
 {% extends 'base.html' %}
 
-{% block title %}My orders | Z-Store{% endblock %}
+{% block title %}My Orders | nice-store{% endblock %}
 
 {% block content %}
-<section class="section section-page">
+<section class="section section-page order-list-page">
     <div class="container">
 
-        <header class="page-header">
-            <h1 class="page-title">My orders</h1>
-            <p class="page-meta">{{ orders|length }} order{{ orders|length|pluralize }}</p>
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <ol>
+                <li><a href="{% url 'store:home' %}">Home</a></li>
+                <li aria-current="page">My orders</li>
+            </ol>
+        </nav>
+
+        <header class="page-header order-list-header">
+            <div>
+                <p class="eyebrow">YOUR PURCHASE HISTORY</p>
+                <h1 class="page-title">My orders</h1>
+                <p class="page-meta">
+                    {{ orders|length }} order{{ orders|length|pluralize }}
+                </p>
+            </div>
+
+            <a class="btn btn-secondary" href="{% url 'store:product_list' %}">
+                Continue shopping
+            </a>
         </header>
 
         {% if orders %}
         <ul class="order-list">
             {% for order in orders %}
             <li class="order-row">
+
                 <a class="order-row-main" href="{{ order.get_absolute_url }}">
+                    <span class="eyebrow">ORDER REFERENCE</span>
                     <span class="order-row-reference">{{ order.reference }}</span>
-                    <span class="order-row-date">{{ order.created_at|date:"j M Y" }}</span>
+                    <span class="order-row-date">
+                        {{ order.created_at|date:"j M Y" }}
+                    </span>
                 </a>
-                <span class="badge badge-{{ order.status }}">{{ order.get_status_display }}</span>
-                <span class="order-row-total">EGP {{ order.total|floatformat:"-2" }}</span>
+
+                <div class="order-row-status">
+                    <span class="eyebrow">STATUS</span>
+                    <span class="badge badge-{{ order.status }}">
+                        {{ order.get_status_display }}
+                    </span>
+                </div>
+
+                <div class="order-row-price">
+                    <span class="eyebrow">TOTAL</span>
+                    <span class="order-row-total">
+                        EGP {{ order.total|floatformat:"-2" }}
+                    </span>
+                </div>
+
+                <a class="order-row-link"
+                   href="{{ order.get_absolute_url }}"
+                   aria-label="View order {{ order.reference }}">
+                    View details
+                    <span aria-hidden="true">→</span>
+                </a>
+
             </li>
             {% endfor %}
         </ul>
+
         {% else %}
-        <div class="empty-state">
-            <p>You have not placed any orders yet.</p>
-            <a class="btn btn-primary" href="{% url 'store:product_list' %}">Start shopping</a>
+        <div class="empty-state order-empty-state">
+            <p class="eyebrow">YOUR HISTORY</p>
+            <h2>No orders yet.</h2>
+            <p>Your purchases will appear here once you place an order.</p>
+
+            <a class="btn btn-primary"
+               href="{% url 'store:product_list' %}">
+                Explore the collection
+            </a>
         </div>
         {% endif %}
 

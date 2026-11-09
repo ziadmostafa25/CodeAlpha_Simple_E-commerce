@@ -1,14 +1,16 @@
+
 {% extends 'base.html' %}
 
-{% block title %}{{ product.name }} | Z-Store{% endblock %}
+{% block title %}{{ product.name }} | nice-store{% endblock %}
 
 {% block content %}
-<section class="section section-page">
+<section class="section section-page product-detail-page">
     <div class="container">
 
         <nav class="breadcrumb" aria-label="Breadcrumb">
             <ol>
                 <li><a href="{% url 'store:home' %}">Home</a></li>
+                <li><a href="{% url 'store:product_list' %}">Shop</a></li>
                 <li><a href="{% url 'store:product_list' %}?category={{ product.category.slug|urlencode }}">{{ product.category.name }}</a></li>
                 <li aria-current="page">{{ product.name }}</li>
             </ol>
@@ -16,115 +18,221 @@
 
         <div class="product-layout">
 
+            <!-- Product gallery -->
             <div class="product-gallery">
                 {% for color in colors %}
-                {% with urls=color.gallery_urls %}
-                <div data-gallery="{{ color.pk }}"{% if color != selected_color %} hidden{% endif %}>
-                    <div class="gallery-main">
-                        <img src="{{ urls.0 }}" alt="{{ product.name }}, {{ color.name }}" data-gallery-main>
-                    </div>
-                    {% if urls|length > 1 %}
-                    <ul class="gallery-thumbs">
-                        {% for url in urls %}
-                        <li>
-                            <button class="gallery-thumb" type="button" data-full="{{ url }}"
-                                    aria-label="Show photo {{ forloop.counter }} of {{ urls|length }}">
-                                <img src="{{ url }}" alt="">
-                            </button>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                </div>
-                {% endwith %}
-                {% empty %}
-                <div>
-                    <div class="gallery-main">
-                        {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                        {% else %}
-                        <span class="placeholder">No image</span>
+                    {% with urls=color.gallery_urls %}
+                    <div class="product-gallery-group"
+                         data-gallery="{{ color.pk }}"
+                         {% if color != selected_color %}hidden{% endif %}>
+
+                        <div class="gallery-main">
+                            {% if urls %}
+                                <img
+                                    src="{{ urls.0 }}"
+                                    alt="{{ product.name }} - {{ color.name }}"
+                                    data-gallery-main
+                                >
+                            {% else %}
+                                <span class="placeholder">No image available</span>
+                            {% endif %}
+                        </div>
+
+                        {% if urls|length > 1 %}
+                        <ul class="gallery-thumbs">
+                            {% for url in urls %}
+                            <li>
+                                <button
+                                    class="gallery-thumb{% if forloop.first %} is-active{% endif %}"
+                                    type="button"
+                                    data-full="{{ url }}"
+                                    aria-label="Show photo {{ forloop.counter }} of {{ urls|length }}"
+                                    {% if forloop.first %}aria-pressed="true"{% else %}aria-pressed="false"{% endif %}
+                                >
+                                    <img src="{{ url }}" alt="">
+                                </button>
+                            </li>
+                            {% endfor %}
+                        </ul>
                         {% endif %}
+
                     </div>
-                </div>
+                    {% endwith %}
+                {% empty %}
+                    <div class="product-gallery-group">
+                        <div class="gallery-main">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                            {% else %}
+                                <span class="placeholder">No image available</span>
+                            {% endif %}
+                        </div>
+                    </div>
                 {% endfor %}
             </div>
 
-            <div>
-                <a class="product-category" href="{% url 'store:product_list' %}?category={{ product.category.slug|urlencode }}">{{ product.category.name }}</a>
+            <!-- Product information -->
+            <div class="product-information">
+
+                <p class="eyebrow">nice-store COLLECTION</p>
+
+                <a class="product-category"
+                   href="{% url 'store:product_list' %}?category={{ product.category.slug|urlencode }}">
+                    {{ product.category.name }}
+                </a>
+
                 <h1 class="product-title">{{ product.name }}</h1>
-                <p class="product-price">EGP {{ product.price|floatformat:"-2" }}</p>
+
+                <p class="product-price">
+                    EGP {{ product.price|floatformat:"-2" }}
+                </p>
+
+                <div class="product-detail-divider"></div>
 
                 {% if product.description %}
-                <div class="product-description">{{ product.description|linebreaks }}</div>
+                <div class="product-description">
+                    {{ product.description|linebreaks }}
+                </div>
+                {% else %}
+                <p class="product-description">
+                    A thoughtfully selected piece from the nice-store collection.
+                </p>
                 {% endif %}
 
                 {% if colors and product.is_in_stock %}
                 <form class="purchase" method="post" action="{% url 'cart:add' %}" data-purchase>
                     {% csrf_token %}
+
                     <input type="hidden" name="next" value="{{ product.get_absolute_url }}">
 
+                    <!-- Colour selection -->
                     <fieldset class="option-group">
-                        <legend class="form-label">Colour: <span data-color-name>{{ selected_color.name }}</span></legend>
+                        <legend class="form-label">
+                            Colour:
+                            <span data-color-name>{{ selected_color.name }}</span>
+                        </legend>
+
                         <div class="swatches">
                             {% for color in colors %}
                             <label class="swatch{% if not color.is_in_stock %} is-sold-out{% endif %}">
-                                <input class="visually-hidden" type="radio" name="color" value="{{ color.pk }}"
-                                       data-color-input data-color-label="{{ color.name }}"
-                                       {% if color == selected_color %}checked{% endif %}
-                                       {% if not color.is_in_stock %}disabled{% endif %}>
-                                <span class="swatch-chip" style="--swatch: {{ color.hex_code }}"></span>
+                                <input
+                                    class="visually-hidden"
+                                    type="radio"
+                                    name="color"
+                                    value="{{ color.pk }}"
+                                    data-color-input
+                                    data-color-label="{{ color.name }}"
+                                    {% if color == selected_color %}checked{% endif %}
+                                    {% if not color.is_in_stock %}disabled{% endif %}
+                                >
+
+                                <span
+                                    class="swatch-chip"
+                                    style="--swatch: {{ color.hex_code }}"
+                                ></span>
+
                                 <span class="visually-hidden">{{ color.name }}{% if not color.is_in_stock %} (sold out){% endif %}</span>
                             </label>
                             {% endfor %}
                         </div>
                     </fieldset>
 
+                    <!-- Size selection -->
                     {% for color in colors %}
-                    <fieldset class="option-group" data-sizes-for="{{ color.pk }}"{% if color != selected_color %} hidden{% endif %}>
-                        <legend class="form-label">Size</legend>
+                    <fieldset
+                        class="option-group"
+                        data-sizes-for="{{ color.pk }}"
+                        {% if color != selected_color %}hidden{% endif %}
+                    >
+                        <legend class="form-label">Select size</legend>
+
                         <div class="size-options">
                             {% for item in color.ordered_sizes %}
                             <label class="size-option{% if not item.stock %} is-sold-out{% endif %}">
-                                <input class="visually-hidden" type="radio" name="size" value="{{ item.pk }}"
-                                       data-stock="{{ item.stock }}"
-                                       {% if not item.stock %}disabled{% endif %}>
+                                <input
+                                    class="visually-hidden"
+                                    type="radio"
+                                    name="size"
+                                    value="{{ item.pk }}"
+                                    data-stock="{{ item.stock }}"
+                                    {% if not item.stock %}disabled{% endif %}
+                                >
+
                                 <span class="size-option-label">{{ item.size }}</span>
-                                {% if not item.stock %}<span class="visually-hidden">(sold out)</span>{% endif %}
+
+                                {% if not item.stock %}
+                                    <span class="visually-hidden">(sold out)</span>
+                                {% endif %}
                             </label>
                             {% endfor %}
                         </div>
                     </fieldset>
                     {% endfor %}
+
                     <p class="stock-hint" data-stock-hint aria-live="polite"></p>
 
-                    <div class="field">
+                    <!-- Quantity -->
+                    <div class="field product-quantity-field">
                         <label class="form-label" for="quantity">Quantity</label>
-                        <input class="input quantity-input" id="quantity" type="number" name="quantity"
-                               value="1" min="1" max="{{ max_quantity }}" inputmode="numeric"
-                               data-quantity data-max="{{ max_quantity }}">
+
+                        <input
+                            class="input quantity-input"
+                            id="quantity"
+                            type="number"
+                            name="quantity"
+                            value="1"
+                            min="1"
+                            max="{{ max_quantity }}"
+                            inputmode="numeric"
+                            data-quantity
+                            data-max="{{ max_quantity }}"
+                        >
                     </div>
 
-                    <button class="btn btn-primary btn-block" type="submit">Add to cart</button>
+                    <button class="btn btn-primary btn-block product-add-button" type="submit">
+                        Add to cart
+                    </button>
+
+                    <p class="product-secure-note">
+                        Carefully selected. Made for everyday wear.
+                    </p>
                 </form>
+
                 {% else %}
-                <p class="stock-note">This product is currently sold out.</p>
+                    <div class="stock-note sold-out-notice">
+                        This product is currently sold out.
+                    </div>
                 {% endif %}
 
-                <p class="policy-note">{{ return_policy }}</p>
+                <div class="product-policy">
+                    <p class="policy-note">{{ return_policy }}</p>
+                </div>
+
             </div>
 
         </div>
 
+        <!-- Related products -->
         {% if related_products %}
-        <div class="related">
-            <h2 class="section-title">More in {{ product.category.name }}</h2>
+        <section class="related">
+            <div class="related-heading">
+                <div>
+                    <p class="eyebrow">YOU MAY ALSO LIKE</p>
+                    <h2 class="section-title">More in {{ product.category.name }}</h2>
+                </div>
+
+                <a class="text-link"
+                   href="{% url 'store:product_list' %}?category={{ product.category.slug|urlencode }}">
+                    View collection
+                </a>
+            </div>
+
             <div class="card-grid">
                 {% for product in related_products %}
                     {% include 'partials/product_card.html' %}
                 {% endfor %}
             </div>
-        </div>
+        </section>
         {% endif %}
 
     </div>

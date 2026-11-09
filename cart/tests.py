@@ -1,4 +1,4 @@
-from decimal import Decimal
+﻿from decimal import Decimal
 
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -15,12 +15,12 @@ class CartTestCase(TestCase):
             self.category,
             'Classic Jacket',
             price='850',
-            colors={'Black': {'S': 5, 'M': 3, 'L': 0}, 'Brown': {'S': 2}},
+            colors={'Black': {'48': 5, '50': 3, '52': 0}, 'Brown': {'48': 2}},
         )
-        self.black_s = get_size(self.product, 'S', 'Black')
-        self.black_m = get_size(self.product, 'M', 'Black')
-        self.black_l = get_size(self.product, 'L', 'Black')
-        self.brown_s = get_size(self.product, 'S', 'Brown')
+        self.black_s = get_size(self.product, '48', 'Black')
+        self.black_m = get_size(self.product, '50', 'Black')
+        self.black_l = get_size(self.product, '52', 'Black')
+        self.brown_s = get_size(self.product, '48', 'Brown')
 
     def add(self, size, quantity=1, **extra):
         return self.client.post(
@@ -147,8 +147,8 @@ class CartPageTests(CartTestCase):
         self.add(self.black_s, 2)
         self.add(self.brown_s, 1)
         response = self.client.get(reverse('cart:detail'))
-        self.assertContains(response, 'Black, size S')
-        self.assertContains(response, 'Brown, size S')
+        self.assertContains(response, 'Black, size 48')
+        self.assertContains(response, 'Brown, size 48')
         self.assertContains(response, 'EGP 1700')
         self.assertContains(response, 'EGP 2550')
         cart = response.context['cart']
@@ -233,3 +233,5 @@ class GuestCartTests(CartTestCase):
     def test_browsing_does_not_create_a_session(self):
         self.client.get(reverse('store:home'))
         self.assertNotIn('sessionid', self.client.cookies)
+
+

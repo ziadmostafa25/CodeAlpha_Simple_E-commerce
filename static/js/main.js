@@ -1,4 +1,4 @@
-// Z-Store | Interface behaviour: mobile menu, product options, payment cards.
+// nice-store | Interface behaviour: mobile menu, product options, payment cards.
 (function () {
     'use strict';
 
@@ -65,7 +65,23 @@
 
         const showColor = function (id, label) {
             galleries.forEach(function (gallery) {
-                gallery.hidden = gallery.dataset.gallery !== id;
+                const isMatch = gallery.dataset.gallery === id;
+                gallery.hidden = !isMatch;
+                if (isMatch) {
+                    const firstThumb = gallery.querySelector('.gallery-thumb');
+                    if (firstThumb) {
+                        gallery.querySelectorAll('.gallery-thumb').forEach(function (t) {
+                            t.classList.remove('is-active');
+                            t.setAttribute('aria-pressed', 'false');
+                        });
+                        firstThumb.classList.add('is-active');
+                        firstThumb.setAttribute('aria-pressed', 'true');
+                        const mainImg = gallery.querySelector('[data-gallery-main]');
+                        if (mainImg && firstThumb.dataset.full) {
+                            mainImg.src = firstThumb.dataset.full;
+                        }
+                    }
+                }
             });
             sizeGroups.forEach(function (group) {
                 group.hidden = group.dataset.sizesFor !== id;
@@ -95,7 +111,17 @@
         document.querySelectorAll('.gallery-thumb').forEach(function (thumb) {
             thumb.addEventListener('click', function () {
                 const gallery = thumb.closest('[data-gallery]');
-                gallery.querySelector('[data-gallery-main]').src = thumb.dataset.full;
+                if (!gallery) return;
+                const mainImg = gallery.querySelector('[data-gallery-main]');
+                if (mainImg && thumb.dataset.full) {
+                    mainImg.src = thumb.dataset.full;
+                }
+                gallery.querySelectorAll('.gallery-thumb').forEach(function (t) {
+                    t.classList.remove('is-active');
+                    t.setAttribute('aria-pressed', 'false');
+                });
+                thumb.classList.add('is-active');
+                thumb.setAttribute('aria-pressed', 'true');
             });
         });
     }
