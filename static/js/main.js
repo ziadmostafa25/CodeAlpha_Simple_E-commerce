@@ -1,4 +1,4 @@
-// nice-store | Interface behaviour: mobile menu, product options, payment cards.
+// Nice Store | Interface behaviour: mobile menu, product options, payment cards.
 (function () {
     'use strict';
 

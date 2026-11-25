@@ -1,4 +1,4 @@
-﻿import cloudinary
+import cloudinary
 import cloudinary.api
 import cloudinary.uploader
 import cloudinary.utils

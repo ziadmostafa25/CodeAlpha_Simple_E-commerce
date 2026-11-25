@@ -1,6 +1,6 @@
 
 /* ==========================================================================
-   nice-store | Components
+   Nice Store | Components
    Header, navigation, buttons, forms, product cards and footer
    ========================================================================== */
 
@@ -753,7 +753,7 @@
     }
 }
 /* =========================================
-   nice-store FINAL COMPONENT POLISH
+   Nice Store FINAL COMPONENT POLISH
    ========================================= */
 
 /* Product card layout */
@@ -840,7 +840,7 @@
         height: 32px;
     }
 }
-/* nice-store BRAND LOGO COLORS */
+/* Nice Store BRAND LOGO COLORS */
 
 .brand .logo {
     display: inline-flex;
@@ -865,7 +865,7 @@
     fill: #A17B55;
 }
 
-.brand .logo-word-z {
+.brand .logo-word-nice {
     color: #A17B55;
 }
 

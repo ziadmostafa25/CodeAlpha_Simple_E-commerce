@@ -1,7 +1,7 @@
 
 {% extends 'base.html' %}
 
-{% block title %}{{ product.name }} | nice-store{% endblock %}
+{% block title %}{{ product.name }} | Nice Store{% endblock %}
 
 {% block content %}
 <section class="section section-page product-detail-page">
@@ -74,7 +74,7 @@
             <!-- Product information -->
             <div class="product-information">
 
-                <p class="eyebrow">nice-store COLLECTION</p>
+                <p class="eyebrow">Nice Store COLLECTION</p>
 
                 <a class="product-category"
                    href="{% url 'store:product_list' %}?category={{ product.category.slug|urlencode }}">
@@ -95,7 +95,7 @@
                 </div>
                 {% else %}
                 <p class="product-description">
-                    A thoughtfully selected piece from the nice-store collection.
+                    A thoughtfully selected piece from the Nice Store collection.
                 </p>
                 {% endif %}
 

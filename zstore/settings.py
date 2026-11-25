@@ -1,4 +1,4 @@
-﻿"""
+"""
 Django settings for the Z-Store project.
 
 Local development works with no configuration. For a real deployment set the
@@ -198,6 +198,3 @@ CART_MAX_QUANTITY = 10
 # whose details are empty is shown as unavailable at checkout.
 VODAFONE_CASH_NUMBER = os.environ.get('ZSTORE_VODAFONE_CASH_NUMBER', '').strip()
 INSTAPAY_ADDRESS = os.environ.get('ZSTORE_INSTAPAY_ADDRESS', '').strip()
-
-
-

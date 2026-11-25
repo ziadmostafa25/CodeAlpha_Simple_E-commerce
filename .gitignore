@@ -21,3 +21,13 @@ staticfiles/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Local databases and backups
+*.sqlite3
+*.sqlite3-journal
+*backup*
+*.bak
+
+# Environment files (keep the example template)
+.env.*
+!.env.example

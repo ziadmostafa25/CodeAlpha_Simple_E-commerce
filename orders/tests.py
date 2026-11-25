@@ -1,4 +1,4 @@
-﻿import uuid
+import uuid
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
@@ -578,4 +578,3 @@ class OrderAdminTests(OrderTestCase):
         self.assertNotContains(
             self.client.get(self.changelist + '?status__exact=shipped'), self.order.reference
         )
-

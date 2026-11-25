@@ -301,7 +301,7 @@ class SiteChromeTests(TestCase):
 
     def test_wordmark_is_split_into_two_colours(self):
         response = self.client.get(reverse('store:home'))
-        self.assertContains(response, 'logo-word-z')
+        self.assertContains(response, 'logo-word-nice')
         self.assertContains(response, 'logo-word-store')
 
     def test_current_page_is_marked_in_the_navigation(self):
@@ -358,7 +358,7 @@ class RoutingTests(TestCase):
         response = self.client.get('/no-such-page/')
         self.assertEqual(response.status_code, 404)
         self.assertContains(response, 'Page not found', status_code=404)
-        self.assertContains(response, 'logo-word-z', status_code=404)
+        self.assertContains(response, 'logo-word-nice', status_code=404)
 
 
 class StoreAdminTests(TestCase):
@@ -392,4 +392,3 @@ class StoreAdminTests(TestCase):
         response = self.client.get(reverse('admin:store_product_changelist'))
         self.assertEqual(response.status_code, 302)
         self.assertIn('/admin/login/', response['Location'])
-

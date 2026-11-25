@@ -1,4 +1,4 @@
-﻿from decimal import Decimal
+from decimal import Decimal
 
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -233,5 +233,3 @@ class GuestCartTests(CartTestCase):
     def test_browsing_does_not_create_a_session(self):
         self.client.get(reverse('store:home'))
         self.assertNotIn('sessionid', self.client.cookies)
-
-

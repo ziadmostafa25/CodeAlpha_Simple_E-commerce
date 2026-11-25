@@ -1,7 +1,7 @@
 
 {% extends 'base.html' %}
 
-{% block title %}{% if selected_category %}{{ selected_category.name }}{% elif query %}Search: {{ query }}{% else %}Shop{% endif %} | nice-store{% endblock %}
+{% block title %}{% if selected_category %}{{ selected_category.name }}{% elif query %}Search: {{ query }}{% else %}Shop{% endif %} | Nice Store{% endblock %}
 
 {% block content %}
 <section class="section section-page shop-page">
@@ -9,7 +9,7 @@
 
         <header class="page-header shop-page-header">
             <div>
-                <p class="eyebrow">THE nice-store COLLECTION</p>
+                <p class="eyebrow">THE Nice Store COLLECTION</p>
                 <h1 class="page-title">
                     {% if selected_category %}
                         {{ selected_category.name }}
